@@ -3,6 +3,18 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "A8S2BvJZghdrzqJXbvrMsTDVgL0=",
+			"path": "github.com/davecgh/go-spew",
+			"revision": "d8f796af33cc11cb798c1aaeb27a4ebc5099927d",
+			"revisionTime": "2018-08-30T19:11:22Z"
+		},
+		{
+			"checksumSHA1": "CSPbwbyzqA6sfORicn4HFtIhF/c=",
+			"path": "github.com/davecgh/go-spew/spew",
+			"revision": "d8f796af33cc11cb798c1aaeb27a4ebc5099927d",
+			"revisionTime": "2018-08-30T19:11:22Z"
+		},
+		{
 			"checksumSHA1": "NELtJHqYDSWpmjjj7dZnX2tLEuE=",
 			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/encoding",
 			"revision": "6b24c0085aaeaf3b2844acd18066864e24b57387",

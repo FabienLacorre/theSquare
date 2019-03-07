@@ -19,3 +19,7 @@ services:
       dockerfile: Dockerfile
     depends_on: 
       - 'neo4j'
+    environment:
+      - NEO4J_BOLT_URL=neo4j:7687
+      - NEO4J_LOGIN=${NEO4J_LOGIN}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
