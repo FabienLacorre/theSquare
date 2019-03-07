@@ -7,12 +7,13 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io"
+	"net/http"
 	"os"
-	"time"
+	"server/internal/utils"
 
-	"github.com/davecgh/go-spew/spew"
-	bolt "github.com/moutoum/golang-neo4j-bolt-driver"
+	"server/internal/api"
+
+	"github.com/emicklei/go-restful"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
@@ -37,42 +38,23 @@ func createNeo4jURL(ctx *cli.Context) (string, error) {
 }
 
 func run(ctx *cli.Context) error {
-
-	var (
-		conn bolt.Conn
-		err  error
-	)
-
 	url, err := createNeo4jURL(ctx)
 	if err != nil {
 		return err
 	}
 
-	driv := bolt.NewDriver()
-	ticker := time.Tick(1 * time.Second)
-	limit := time.Now().Add(10 * time.Second)
-
-	for t := <-ticker; t.Before(limit); t = <-ticker {
-		if conn, err = driv.OpenNeo(url); err != nil {
-			conn = nil
-			logrus.WithError(err).Warn("cannot open neo4j conn")
-		}
-	}
-	if conn == nil {
-		return errors.New("cannot open neo4j connection")
+	logrus.WithField("url", url).Info("Trying to connect to Neo4j")
+	conn, err := utils.ConnectNeo4j(url)
+	if err != nil {
+		return err
 	}
 	defer conn.Close()
 
-	r, err := conn.QueryNeo("MATCH (n) RETURN n", nil)
-	if err != nil {
-		return fmt.Errorf("cannot query: %v", err)
-	}
+	profileService := api.ProfileService{}
+	restful.Add(profileService.Register("/api"))
 
-	spew.Config.Indent = "\t"
-
-	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
-		spew.Dump(data)
-	}
+	logrus.Infof("Listening on port 8080...")
+	http.ListenAndServe(":8080", nil)
 
 	return nil
 }

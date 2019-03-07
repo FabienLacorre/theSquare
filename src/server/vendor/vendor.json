@@ -15,6 +15,18 @@
 			"revisionTime": "2018-08-30T19:11:22Z"
 		},
 		{
+			"checksumSHA1": "K1WOJoCdNlkFEERn6Yc0nHyj7jY=",
+			"path": "github.com/emicklei/go-restful",
+			"revision": "0d9b078e59e9364cc96f84e6aaa268d74f2a0449",
+			"revisionTime": "2019-03-03T14:26:05Z"
+		},
+		{
+			"checksumSHA1": "rmsBHtFpV3osid71XnTZBo/b3bU=",
+			"path": "github.com/emicklei/go-restful/log",
+			"revision": "0d9b078e59e9364cc96f84e6aaa268d74f2a0449",
+			"revisionTime": "2019-03-03T14:26:05Z"
+		},
+		{
 			"checksumSHA1": "NELtJHqYDSWpmjjj7dZnX2tLEuE=",
 			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/encoding",
 			"revision": "6b24c0085aaeaf3b2844acd18066864e24b57387",
@@ -51,10 +63,28 @@
 			"revisionTime": "2018-11-01T02:19:23Z"
 		},
 		{
+			"checksumSHA1": "TB2vxux9xQbvsTHOVt4aRTuvSn4=",
+			"path": "github.com/json-iterator/go",
+			"revision": "0ff49de124c6f76f8494e194af75bde0f1a49a29",
+			"revisionTime": "2019-03-06T14:29:09Z"
+		},
+		{
 			"checksumSHA1": "Aulh7C5SVOA4Jzt5eHNH6197Mbk=",
 			"path": "github.com/konsorten/go-windows-terminal-sequences",
 			"revision": "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e",
 			"revisionTime": "2019-02-26T22:47:05Z"
+		},
+		{
+			"checksumSHA1": "ZTcgWKWHsrX0RXYVXn5Xeb8Q0go=",
+			"path": "github.com/modern-go/concurrent",
+			"revision": "bacd9c7ef1dd9b15be4a9909b8ac7a4e313eec94",
+			"revisionTime": "2018-03-06T01:26:44Z"
+		},
+		{
+			"checksumSHA1": "qvH48wzTIV3QKSDqI0dLFtVjaDI=",
+			"path": "github.com/modern-go/reflect2",
+			"revision": "94122c33edd36123c84d5368cfb2b69df93a0ec8",
+			"revisionTime": "2018-07-18T01:23:57Z"
 		},
 		{
 			"checksumSHA1": "qly1D/btY/35i+UuwhT9ZCkSCFE=",
