@@ -1,0 +1,85 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "NELtJHqYDSWpmjjj7dZnX2tLEuE=",
+			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/encoding",
+			"revision": "6b24c0085aaeaf3b2844acd18066864e24b57387",
+			"revisionTime": "2018-11-01T02:19:23Z"
+		},
+		{
+			"checksumSHA1": "9lgMFoaIFZe75vv7ln+IbPKHasE=",
+			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/errors",
+			"revision": "6b24c0085aaeaf3b2844acd18066864e24b57387",
+			"revisionTime": "2018-11-01T02:19:23Z"
+		},
+		{
+			"checksumSHA1": "MeB74aEJl/Vif3wfI/yyskLXgQ8=",
+			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/log",
+			"revision": "6b24c0085aaeaf3b2844acd18066864e24b57387",
+			"revisionTime": "2018-11-01T02:19:23Z"
+		},
+		{
+			"checksumSHA1": "QBWn/ajykCeEt1W21Ufl9RxLeX4=",
+			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/structures",
+			"revision": "6b24c0085aaeaf3b2844acd18066864e24b57387",
+			"revisionTime": "2018-11-01T02:19:23Z"
+		},
+		{
+			"checksumSHA1": "vLBWZ/5wRQ4PIyIOW3dbXlKbd3s=",
+			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/structures/graph",
+			"revision": "6b24c0085aaeaf3b2844acd18066864e24b57387",
+			"revisionTime": "2018-11-01T02:19:23Z"
+		},
+		{
+			"checksumSHA1": "WSdNJOxRdPV0gCzq7mX6cqIf3/c=",
+			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/structures/messages",
+			"revision": "6b24c0085aaeaf3b2844acd18066864e24b57387",
+			"revisionTime": "2018-11-01T02:19:23Z"
+		},
+		{
+			"checksumSHA1": "Aulh7C5SVOA4Jzt5eHNH6197Mbk=",
+			"path": "github.com/konsorten/go-windows-terminal-sequences",
+			"revision": "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e",
+			"revisionTime": "2019-02-26T22:47:05Z"
+		},
+		{
+			"checksumSHA1": "qly1D/btY/35i+UuwhT9ZCkSCFE=",
+			"path": "github.com/moutoum/golang-neo4j-bolt-driver",
+			"revision": "89260519084663f71d4045a6197d3e3b2957218a",
+			"revisionTime": "2019-03-07T09:05:07Z"
+		},
+		{
+			"checksumSHA1": "P0/KcUSbgsZH3Kg18T8PV/vvKfM=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "d7b6bf5e4d26448fd977d07d745a2a66097ddecb",
+			"revisionTime": "2019-03-06T13:14:08Z"
+		},
+		{
+			"checksumSHA1": "ef7fqXCjAavRO2aCl7FOKEqoqrg=",
+			"path": "github.com/urfave/cli",
+			"revision": "693af58b4d51b8fcc7f9d89576da170765980581",
+			"revisionTime": "2019-02-03T18:40:40Z"
+		},
+		{
+			"checksumSHA1": "QU00lGkD/G00hoTs2qG7q4xsLVc=",
+			"path": "golang.org/x/crypto/ssh/terminal",
+			"revision": "8dd112bcdc25174059e45e07517d9fc663123347",
+			"revisionTime": "2019-02-28T09:13:53Z"
+		},
+		{
+			"checksumSHA1": "Bl6Kf98A3WgBZIge0gxi8G5K5kU=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "a98ae47d97a5abb3a3e9045da36315f9f8312970",
+			"revisionTime": "2019-03-05T06:55:27Z"
+		},
+		{
+			"checksumSHA1": "Hu8GoQK1euwtE4UjrhXepmk2NM8=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "a98ae47d97a5abb3a3e9045da36315f9f8312970",
+			"revisionTime": "2019-03-05T06:55:27Z"
+		}
+	],
+	"rootPath": "server"
+}

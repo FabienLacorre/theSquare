@@ -1,0 +1,21 @@
+# File: docker-compose.yml
+# File Created: 06 Mar 2019 14:14
+# By Maxence Moutoussamy <maxence.moutoussamy1@gmail.com>
+
+version: '3.2'
+
+services:
+
+  neo4j:
+    image: neo4j:latest
+    ports:
+      - 7474:7474
+      - 7687:7687
+    restart: on-failure
+
+  server:
+    build:
+      context: src/server
+      dockerfile: Dockerfile
+    depends_on: 
+      - 'neo4j'
