@@ -5,10 +5,19 @@
 package api
 
 import (
+	"net/http"
+	"server/internal/dao"
+	"strconv"
+
 	"github.com/emicklei/go-restful"
 )
 
 type ProfileService struct {
+	manager *dao.DataManager
+}
+
+func NewProfileService(manager *dao.DataManager) Service {
+	return &ProfileService{manager}
 }
 
 func (s *ProfileService) Register(root string) *restful.WebService {
@@ -22,5 +31,15 @@ func (s *ProfileService) Register(root string) *restful.WebService {
 }
 
 func (s *ProfileService) getByID(req *restful.Request, resp *restful.Response) {
-	resp.Write([]byte("Hello world!"))
+	id, err := strconv.Atoi(req.PathParameter("id"))
+	if err != nil {
+		resp.WriteErrorString(http.StatusBadRequest, "id must be a number")
+		return
+	}
+
+	if err := s.manager.GetProfileWithID(id); err != nil {
+		resp.WriteError(http.StatusInternalServerError, err)
+	}
+
+	resp.Write([]byte("Everything ok"))
 }
