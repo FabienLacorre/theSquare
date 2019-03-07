@@ -2,7 +2,7 @@
 # File Created: 06 Mar 2019 11:31
 # By Maxence Moutoussamy <maxence.moutoussamy1@gmail.com>
 
-FROM golang:onbuild
+FROM golang:1.8
 ADD . /go/src/server
 WORKDIR /go/src/server
 RUN go get server

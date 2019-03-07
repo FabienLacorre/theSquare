@@ -17,6 +17,8 @@ services:
     build:
       context: src/server
       dockerfile: Dockerfile
+    ports:
+      - 8080:8080
     depends_on: 
       - 'neo4j'
     environment:
