@@ -9,10 +9,10 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	
+
+	"server/internal/api"
 	"server/internal/dao"
 	"server/internal/utils"
-	"server/internal/api"
 
 	"github.com/emicklei/go-restful"
 	"github.com/sirupsen/logrus"
