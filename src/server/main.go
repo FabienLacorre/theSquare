@@ -61,7 +61,7 @@ func run(ctx *cli.Context) error {
 	profileService := api.NewProfileService(dao.NewDataManager(conn))
 
 	middleware := negroni.New()
-	middleware.Use(negroni.NewStatic(http.Dir("../../static/")))
+	middleware.Use(negroni.NewStatic(http.Dir("../../public/app")))
 	middleware.Use(negronilogrus.NewMiddleware())
 	middleware.Use(sessions.Sessions("session", store))
 	middleware.UseFunc(internal.AuthMiddleware)
