@@ -15,8 +15,10 @@ import (
 	"server/internal/utils"
 
 	"github.com/emicklei/go-restful"
+	negronilogrus "github.com/meatballhat/negroni-logrus"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
+	"github.com/urfave/negroni"
 )
 
 func createNeo4jURL(ctx *cli.Context) (string, error) {
@@ -52,10 +54,15 @@ func run(ctx *cli.Context) error {
 	defer conn.Close()
 
 	profileService := api.NewProfileService(dao.NewDataManager(conn))
-	restful.Add(profileService.Register("/api"))
+	container := restful.NewContainer()
+	container.Add(profileService.Register("/api"))
+
+	middleware := negroni.New()
+	middleware.Use(negronilogrus.NewMiddleware())
+	middleware.UseHandler(container)
 
 	logrus.Infof("Listening on port 8080...")
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", middleware)
 
 	return nil
 }

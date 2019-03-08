@@ -75,6 +75,12 @@
 			"revisionTime": "2019-02-26T22:47:05Z"
 		},
 		{
+			"checksumSHA1": "FlemxyknQEXslaonBUpWs1YOB6w=",
+			"path": "github.com/meatballhat/negroni-logrus",
+			"revision": "31067281800f66f57548a7a32d9c6c5f963fef83",
+			"revisionTime": "2017-08-01T19:50:57Z"
+		},
+		{
 			"checksumSHA1": "ZTcgWKWHsrX0RXYVXn5Xeb8Q0go=",
 			"path": "github.com/modern-go/concurrent",
 			"revision": "bacd9c7ef1dd9b15be4a9909b8ac7a4e313eec94",
@@ -103,6 +109,12 @@
 			"path": "github.com/urfave/cli",
 			"revision": "693af58b4d51b8fcc7f9d89576da170765980581",
 			"revisionTime": "2019-02-03T18:40:40Z"
+		},
+		{
+			"checksumSHA1": "gPCZ95WGIe+cjePArmS6i7CJ34g=",
+			"path": "github.com/urfave/negroni",
+			"revision": "390728d3c6ab037195ad3ac12daaa0304b0e681a",
+			"revisionTime": "2019-01-17T21:41:14Z"
 		},
 		{
 			"checksumSHA1": "QU00lGkD/G00hoTs2qG7q4xsLVc=",
