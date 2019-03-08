@@ -1,3 +1,4 @@
 .cache/
 pkg/
 .env
+node_modules
