@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-
+	
+	"server/internal/dao"
 	"server/internal/utils"
-
 	"server/internal/api"
 
 	"github.com/emicklei/go-restful"
@@ -51,7 +51,7 @@ func run(ctx *cli.Context) error {
 	}
 	defer conn.Close()
 
-	profileService := api.ProfileService{}
+	profileService := api.NewProfileService(dao.NewDataManager(conn))
 	restful.Add(profileService.Register("/api"))
 
 	logrus.Infof("Listening on port 8080...")
