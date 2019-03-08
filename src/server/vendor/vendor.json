@@ -27,6 +27,36 @@
 			"revisionTime": "2019-03-03T14:26:05Z"
 		},
 		{
+			"checksumSHA1": "O1EJi7Lmh6NmyjfpCHkmdHz+1lE=",
+			"path": "github.com/goincremental/negroni-sessions",
+			"revision": "40b49004abeec57f602bad8509521a865b2be95e",
+			"revisionTime": "2017-12-23T14:32:34Z"
+		},
+		{
+			"checksumSHA1": "r2at94ZOVarmcNNfp7zwiXXyQac=",
+			"path": "github.com/goincremental/negroni-sessions/cookiestore",
+			"revision": "40b49004abeec57f602bad8509521a865b2be95e",
+			"revisionTime": "2017-12-23T14:32:34Z"
+		},
+		{
+			"checksumSHA1": "oHwfghigjTz8Xs+ssxwdl/atb44=",
+			"path": "github.com/gorilla/context",
+			"revision": "51ce91d2eaddeca0ef29a71d766bb3634dadf729",
+			"revisionTime": "2018-10-12T15:35:48Z"
+		},
+		{
+			"checksumSHA1": "NScdwrIOpSH9hoP7i3a6JGmE5rw=",
+			"path": "github.com/gorilla/securecookie",
+			"revision": "e65cf8c5df817c89aeb47ecb46064e802e2de943",
+			"revisionTime": "2018-10-10T17:46:47Z"
+		},
+		{
+			"checksumSHA1": "csomktSHfKVMLgh9B6nikPxd6sk=",
+			"path": "github.com/gorilla/sessions",
+			"revision": "12bd4761fc66ac946e16fcc2a32b1e0b066f6177",
+			"revisionTime": "2018-12-08T21:45:19Z"
+		},
+		{
 			"checksumSHA1": "NELtJHqYDSWpmjjj7dZnX2tLEuE=",
 			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/encoding",
 			"revision": "6b24c0085aaeaf3b2844acd18066864e24b57387",

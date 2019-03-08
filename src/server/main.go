@@ -10,16 +10,21 @@ import (
 	"net/http"
 	"os"
 
+	"server/internal"
 	"server/internal/api"
 	"server/internal/dao"
 	"server/internal/utils"
 
 	"github.com/emicklei/go-restful"
+	sessions "github.com/goincremental/negroni-sessions"
+	"github.com/goincremental/negroni-sessions/cookiestore"
 	negronilogrus "github.com/meatballhat/negroni-logrus"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"github.com/urfave/negroni"
 )
+
+var store = cookiestore.New([]byte("secret-session-key"))
 
 func createNeo4jURL(ctx *cli.Context) (string, error) {
 	login := ctx.GlobalString("neo4j-login")
@@ -54,11 +59,14 @@ func run(ctx *cli.Context) error {
 	defer conn.Close()
 
 	profileService := api.NewProfileService(dao.NewDataManager(conn))
-	container := restful.NewContainer()
-	container.Add(profileService.Register("/api"))
 
 	middleware := negroni.New()
 	middleware.Use(negronilogrus.NewMiddleware())
+	middleware.Use(sessions.Sessions("session", store))
+	middleware.UseFunc(internal.AuthMiddleware)
+
+	container := restful.NewContainer()
+	container.Add(profileService.Register("/api"))
 	middleware.UseHandler(container)
 
 	logrus.Infof("Listening on port 8080...")
