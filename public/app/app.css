@@ -1,0 +1,122 @@
+body{
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  /* background: url('/img/blue.jpg') no-repeat center center fixed; */
+}
+
+video {
+  position: fixed; right: 0; bottom: 0;
+  min-width: 100%; min-height: 100%;
+  width: auto; height: auto; z-index: -100;
+  background-size: cover;
+}
+
+.content {
+  padding-left: 30px;
+  padding-right: 30px;
+  
+}
+
+h1 {
+  color: white;
+}
+
+h2 {
+  color: #33CCCC;
+}
+
+span{
+  color: white;
+}
+/* LOGIN */
+
+.backgroundConnectionPage{
+  width: 100%; 
+  height: 100vh;
+  /*  */
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px black;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(44, 165, 165, 0.4);
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: black;
+}
+
+
+.box{
+  width: 100%;
+  padding: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  background: rgba(0, 0, 20, 0.7);
+  text-align: center;
+}
+.box h1{
+  color: white;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.box h4 {
+  color: white;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding-top: -100px;
+}
+.box input[type = "text"],.box input[type = "password"]{
+  border:0;
+  background: none;
+  display: block;
+  margin: 20px auto;
+  text-align: center;
+  border: 2px solid white;
+  padding: 14px 10px;
+  width: 400px;
+  outline: none;
+  color: white;
+  border-radius: 24px;
+  transition: 0.25s;
+}
+.box input[type = "text"]:focus,.box input[type = "password"]:focus{
+  width: 280px;
+  border-color: #33CCCC;
+}
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: white;
+  opacity: 1; /* Firefox */
+}
+.box button{
+  border:0;
+  background: none;
+  display: block;
+  margin: 20px auto;
+  text-align: center;
+  border: 2px solid white;
+  padding: 14px 40px;
+  outline: none;
+  color: white;
+  border-radius: 24px;
+  transition: 0.25s;
+  cursor: pointer;
+}
+.box button:hover{
+  background: #33CCCC;
+}
+

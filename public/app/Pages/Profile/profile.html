@@ -1,0 +1,226 @@
+<style>
+    .meDiv {
+        height: 380px;
+        width: 100%;
+        background-color: rgba(0, 0, 20, 0.7);
+        margin-right: 10px;
+        padding-top: 15px;
+        padding-left: 15px;
+        border-top-left-radius: 15px;
+    }
+
+    .companieDiv {
+        height: 400px;
+        width: 100%;
+        margin-top: 20px;
+        background-color: rgba(0, 0, 20, 0.7);
+        margin-right: 10px;
+        padding-top: 15px;
+        padding-left: 15px;
+        border-top-left-radius: 15px;
+        overflow: auto;
+    }
+
+    .friendsDiv {
+        height: 800px;
+        width: 100%;
+        background-color: rgba(0, 0, 20, 0.7);
+        margin-right: 10px;
+        padding-top: 15px;
+
+        border-top-left-radius: 15px;
+        overflow: auto;
+    }
+
+    .hobbiesDiv {
+        height: 800px;
+        padding-top: 15px;
+        width: 100%;
+        background-color: rgba(0, 0, 20, 0.7);
+        border-top-left-radius: 15px;
+        overflow: auto;
+    }
+
+    .photoProfile {
+        width: 300px;
+        height: 300px;
+        border-top-left-radius: 10px;
+        overflow: hidden;
+    }
+
+    img {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        width: auto;
+        height: 100%;
+    }
+
+    .subBox {
+        border: 1px solid white;
+        margin-bottom: 10px;
+        height: 100px;
+        border-top-left-radius: 5px;
+        padding: 10px;
+        display: flex;
+        transition: color .6s ease-in;
+    }
+
+    .subBox:hover {
+        border-color: #33CCCC;
+        background-color: rgba(0, 0, 20, 0.4);
+        -webkit-transition: background-color 100ms linear;
+        -ms-transition: background-color 100ms linear;
+        transition: background-color 100ms linear;
+    }
+
+    .photo {
+        height: 80px;
+        width: 80px;
+    }
+
+    .info {
+        width: 100%;
+        margin-left: 20px;
+    }
+
+    .inputPasswordProfile,
+    .inputPasswordProfile {
+        border: 0;
+        background: none;
+        display: block;
+        margin: 20px auto;
+        text-align: center;
+        border: 2px solid white;
+        padding: 14px 10px;
+        width: 400px;
+        outline: none;
+        color: white;
+        border-radius: 24px;
+        transition: 0.25s;
+    }
+
+
+    ::placeholder {
+        color: white;
+        opacity: 1;
+    }
+</style>
+
+<div class="content" style="margin-top:20px;">
+    <div class="">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="meDiv">
+                    <h2 style="color:white">Profile</h2>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="photoProfile">
+                                <img src="../../img/test.jpg">
+                            </div>
+                        </div>
+                        <div class="col-md-5" style=" position: relative;">
+                            <span>{{$ctrl.me.name}}</span>
+                            <span>{{$ctrl.me.surname}}</span>
+                            <br>
+                            <span>{{$ctrl.me.age}}</span>
+                            <br>
+                            <span>{{$ctrl.me.city}}</span>
+                            <br>
+                            <div style=" position:absolute; bottom:0px;">
+                                <button class="btn btn-primary" ng-click="$ctrl.clickModify()">Change
+                                    password</button>
+                                <div ng-if="$ctrl.changePasswordBool === true">
+                                    <input type="text" class="inputPasswordProfile" placeholder="New password">
+                                    <button style="width: 100%" class="btn btn-primary" ng-click="$ctrl.validateChangePassword()">Valider</button>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+                <div class="companieDiv">
+                    <h2 style="color:white">companies</h2>
+                    <div>
+                        <div class="subBox" ng-repeat="companie in $ctrl.companies track by $index"
+                            ng-click="$ctrl.moveToDetails('companie')">
+                            <div class="photo">
+                                <img ng-src="{{companie.photo}}">
+                            </div>
+                            <div class="info">
+                                <span>{{companie.name}}</span>
+                                <div class="float-right">
+                                    <button style="margin-bottom: 5px;" class="btn btn-primary"
+                                        ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
+                                            class="fa fa-thumbs-up"></span></button>
+                                    <br>
+                                    <button class="btn btn-danger"
+                                        ng-click="$ctrl.unfollowClick(object); ; $event.stopPropagation();"><span
+                                            class="fa fa-thumbs-down"></span></button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 friendsDiv">
+                <h2 style="color:white">Friends</h2>
+                <div>
+                    <div class="subBox" ng-repeat="friend in $ctrl.friends track by $index"
+                        ng-click="$ctrl.moveToDetails('friend')">
+                        <div class="photo">
+                            <img ng-src="{{friend.photo}}">
+                        </div>
+                        <div class="info">
+                            <span>{{friend.name}}</span>
+                            <div class="float-right">
+                                <button style="margin-bottom: 5px;" class="btn btn-primary"
+                                    ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
+                                        class="fa fa-thumbs-up"></span></button>
+                                <br>
+                                <button class="btn btn-danger"
+                                    ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
+                                        class="fa fa-thumbs-down"></span></button>
+                            </div>
+                            <span>{{friend.surname}}</span>
+                            <br>
+                            <span>{{friend.age}}</span>
+                            <br>
+                            <span>{{friend.city}}</span>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-3 hobbiesDiv">
+                <h2 style="color:white">Hobbies</h2>
+                <div>
+                    <div class="subBox" ng-repeat="hobbie in $ctrl.hobbies track by $index"
+                        ng-click="$ctrl.moveToDetails('hobbie')">
+                        <div class="photo">
+                            <img ng-src="{{hobbie.photo}}">
+                        </div>
+                        <div class="info">
+                            <span>{{hobbie.name}}</span>
+                            <div class="float-right">
+                                <button style="margin-bottom: 5px;" class="btn btn-primary"
+                                    ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
+                                        class="fa fa-thumbs-up"></span></button>
+                                <br>
+                                <button class="btn btn-danger"
+                                    ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
+                                        class="fa fa-thumbs-down"></span></button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

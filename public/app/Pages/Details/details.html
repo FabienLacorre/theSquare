@@ -1,0 +1,49 @@
+<style>
+    .mainDivDetails {
+        position: absolute;
+        left: 50%;
+        height: 70%;
+        margin-top: 5%;
+        transform: translateX(-50%);
+        width: 70%;
+        background: rgba(0, 0, 10, 0.6);
+        padding: 20px;
+    }
+
+    .buttonBackDetails {
+        margin-bottom: 10px;
+    }
+
+    .photoDetails {
+        width: 200px;
+        height: 200px;
+    }
+</style>
+
+<div class="content">
+    <div class="mainDivDetails">
+        <button class="btn btn-danger buttonBackDetails" ng-click="$ctrl.changeLocation('Dashboard')">Back to
+            dashboard</button>
+        <button class="btn btn-danger buttonBackDetails" ng-click="$ctrl.changeLocation('Profile')">Back to
+            profile</button>
+            <button class="btn btn-danger float-right" style="margin-right: 10px;">UNFOLLOW</button>
+        <button class="btn btn-primary float-right" style="margin-right: 10px;">FOLLOW</button>
+        <div class="row">
+            <h2 style="margin-right: 20px; margin-left: 15px;">{{$ctrl.type | uppercase}}</h2>
+            <h2 style="color: white">{{$ctrl.object.name | uppercase}}</h2>
+        </div>
+        <span>{{$ctrl.object.date | date : 'dd/MM/yyyy'}}</span>
+
+
+        <div class="">
+
+        </div>
+        <img src="{{$ctrl.object.photo}}" class="photoDetails" alt="">
+        <br>
+        <br>
+        <h3 style="color: white;">DESCRIPTION</h3>
+        <span>{{$ctrl.object.description}}</span>
+
+
+    </div>
+</div>
