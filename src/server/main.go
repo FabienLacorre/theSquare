@@ -58,15 +58,19 @@ func run(ctx *cli.Context) error {
 	}
 	defer conn.Close()
 
-	profileService := api.NewProfileService(dao.NewDataManager(conn))
+	loginManager := dao.NewLoginManager(conn)
+	dataManager := dao.NewDataManager(conn)
 
 	middleware := negroni.New()
 	middleware.Use(negroni.NewStatic(http.Dir("../../public/app")))
 	middleware.Use(negronilogrus.NewMiddleware())
 	middleware.Use(sessions.Sessions("session", store))
-	middleware.UseFunc(internal.AuthMiddleware)
+	middleware.UseFunc(internal.AuthMiddleware(loginManager))
 
 	container := restful.NewContainer()
+	connectionService := api.ConnectionService{}
+	profileService := api.NewProfileService(dataManager)
+	container.Add(connectionService.Register("/api"))
 	container.Add(profileService.Register("/api"))
 	middleware.UseHandler(container)
 

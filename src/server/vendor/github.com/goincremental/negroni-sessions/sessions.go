@@ -25,11 +25,8 @@ package sessions
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
-
-	"github.com/davecgh/go-spew/spew"
 
 	gContext "github.com/gorilla/context"
 	"github.com/gorilla/sessions"
@@ -99,12 +96,7 @@ func Sessions(name string, store Store) negroni.HandlerFunc {
 		rw := res.(negroni.ResponseWriter)
 		rw.Before(func(negroni.ResponseWriter) {
 			if s.Written() {
-				fmt.Printf("----------------------------- Write() -- %v\n", s.session.IsNew)
-				spew.Dump(s.request.Cookies())
-				spew.Dump(s.session.Values)
 				check(s.Session().Save(r, res))
-				spew.Dump(res.Header())
-				fmt.Printf("-----------------------------\n")
 			}
 		})
 
@@ -203,10 +195,6 @@ func (s *session) Session() *sessions.Session {
 	if s.session == nil {
 		var err error
 		s.session, err = s.store.Get(s.request, s.name)
-		fmt.Printf("----------------------------- Session() %v\n", s.session.IsNew)
-		spew.Dump(s.request.Cookies())
-		spew.Dump(s.session.Values)
-		fmt.Printf("-----------------------------\n")
 		check(err)
 	}
 
