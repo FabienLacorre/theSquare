@@ -61,10 +61,14 @@ func run(ctx *cli.Context) error {
 	loginManager := dao.NewLoginManager(conn)
 	dataManager := dao.NewDataManager(conn)
 
-	connectionService := api.ConnectionService{}
+	connectionService := api.NewConnectionService(loginManager)
 	profileService := api.NewProfileService(dataManager)
 
 	router := mux.NewRouter()
+
+	router.HandleFunc("/sign-in", connectionService.SignIn).
+		Methods("POST", "PUT").
+		HeadersRegexp("Content-Type", "application/json")
 
 	apiRouter := mux.NewRouter()
 	apiRouter.HandleFunc("/api/login", connectionService.Login).Methods("POST")
