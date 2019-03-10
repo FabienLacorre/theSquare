@@ -15,9 +15,9 @@ import (
 	"server/internal/dao"
 	"server/internal/utils"
 
-	"github.com/emicklei/go-restful"
 	sessions "github.com/goincremental/negroni-sessions"
 	"github.com/goincremental/negroni-sessions/cookiestore"
+	"github.com/gorilla/mux"
 	negronilogrus "github.com/meatballhat/negroni-logrus"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -61,21 +61,30 @@ func run(ctx *cli.Context) error {
 	loginManager := dao.NewLoginManager(conn)
 	dataManager := dao.NewDataManager(conn)
 
-	middleware := negroni.New()
-	middleware.Use(negroni.NewStatic(http.Dir("../../public/app")))
-	middleware.Use(negronilogrus.NewMiddleware())
-	middleware.Use(sessions.Sessions("session", store))
-	middleware.UseFunc(internal.AuthMiddleware(loginManager))
-
-	container := restful.NewContainer()
 	connectionService := api.ConnectionService{}
 	profileService := api.NewProfileService(dataManager)
-	container.Add(connectionService.Register("/api"))
-	container.Add(profileService.Register("/api"))
-	middleware.UseHandler(container)
+
+	router := mux.NewRouter()
+
+	apiRouter := mux.NewRouter()
+	apiRouter.HandleFunc("/api/login", connectionService.Login).Methods("POST")
+	apiRouter.HandleFunc("/api/logout", connectionService.Logout).Methods("POST")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}", profileService.GetByID).Methods("GET")
+	apiRouter.PathPrefix("/api/").Handler(negroni.New(
+		negronilogrus.NewMiddleware(),
+		sessions.Sessions("session", store),
+		internal.AuthMiddleware(loginManager),
+		negroni.Wrap(apiRouter),
+	))
+
+	router.PathPrefix("/").Handler(negroni.New(
+		negroni.NewStatic(http.Dir("../../public/app"))),
+	)
 
 	logrus.Infof("Listening on port 8080...")
-	http.ListenAndServe(":8080", middleware)
+	http.ListenAndServe(":8080", router)
+
+	// router.PathPrefix("/sign-in")
 
 	return nil
 }

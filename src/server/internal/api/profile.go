@@ -9,37 +9,32 @@ import (
 	"server/internal/dao"
 	"strconv"
 
-	"github.com/emicklei/go-restful"
+	"github.com/sirupsen/logrus"
+
+	"github.com/gorilla/mux"
 )
 
 type ProfileService struct {
 	manager *dao.DataManager
 }
 
-func NewProfileService(manager *dao.DataManager) Service {
+func NewProfileService(manager *dao.DataManager) *ProfileService {
 	return &ProfileService{manager}
 }
 
-func (s *ProfileService) Register(root string) *restful.WebService {
-	ws := new(restful.WebService)
-	ws.Path(root + "/profile")
-	ws.Route(ws.GET("/{id}").To(s.getByID).
-		Doc("Get the profile that is corresponding to the given ID").
-		Param(ws.PathParameter("id", "ID that correspond to the profile").DataType("int"))).
-		Produces(restful.MIME_JSON)
-	return ws
-}
-
-func (s *ProfileService) getByID(req *restful.Request, resp *restful.Response) {
-	id, err := strconv.Atoi(req.PathParameter("id"))
+func (s *ProfileService) GetByID(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		resp.WriteErrorString(http.StatusBadRequest, "id must be a number")
+		http.Error(rw, "id must be a number", http.StatusBadRequest)
 		return
 	}
 
 	if err := s.manager.GetProfileWithID(id); err != nil {
-		resp.WriteError(http.StatusInternalServerError, err)
+		logrus.WithError(err).Error("cannot get profile with id")
+		http.Error(rw, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 
-	resp.Write([]byte("Everything ok"))
+	rw.Write([]byte("Everything ok"))
 }

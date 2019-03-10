@@ -4,8 +4,10 @@
 
 package api
 
-import "github.com/emicklei/go-restful"
+// import "github.com/emicklei/go-restful"
 
-type Service interface {
-	Register(string) *restful.WebService
-}
+// import "github.com/emicklei/go-restful"
+
+// type Service interface {
+// 	Register(string) *restful.WebService
+// }

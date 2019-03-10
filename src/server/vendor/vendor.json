@@ -15,12 +15,6 @@
 			"revisionTime": "2018-08-30T19:11:22Z"
 		},
 		{
-			"checksumSHA1": "K1WOJoCdNlkFEERn6Yc0nHyj7jY=",
-			"path": "github.com/emicklei/go-restful",
-			"revision": "0d9b078e59e9364cc96f84e6aaa268d74f2a0449",
-			"revisionTime": "2019-03-03T14:26:05Z"
-		},
-		{
 			"checksumSHA1": "rmsBHtFpV3osid71XnTZBo/b3bU=",
 			"path": "github.com/emicklei/go-restful/log",
 			"revision": "0d9b078e59e9364cc96f84e6aaa268d74f2a0449",
@@ -43,6 +37,12 @@
 			"path": "github.com/gorilla/context",
 			"revision": "51ce91d2eaddeca0ef29a71d766bb3634dadf729",
 			"revisionTime": "2018-10-12T15:35:48Z"
+		},
+		{
+			"checksumSHA1": "WgzN84Tx+7en7p/e8gSTupIqygw=",
+			"path": "github.com/gorilla/mux",
+			"revision": "15a353a636720571d19e37b34a14499c3afa9991",
+			"revisionTime": "2019-02-28T18:12:03Z"
 		},
 		{
 			"checksumSHA1": "NScdwrIOpSH9hoP7i3a6JGmE5rw=",
