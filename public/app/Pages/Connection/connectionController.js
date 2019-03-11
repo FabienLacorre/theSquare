@@ -16,15 +16,23 @@ Connection.config(['$routeProvider', function ($routeProvider) {
 Connection.controller('ConnectionController', function ($location, $http) {
 
     document.getElementById('test').style.display = "none";
+    this.username = undefined;
+    this.password = undefined;
 
+
+    //login:mdp Base64
     /**
      * @brief try to log a user 
      * if OK redirect to dashboard page
      */
     this.tryToLogin = () => {
-        // TO DO connection routine
-        $http.post('/api/login', null, { headers: { 'Authorization': 'Basic TWF4OkFiO3EqSWxl' } }).then((response) => response.data)
+        console.log(this.username)
+        console.log(this.password)
+        let base64 = btoa(this.username + ":" + this.password);
+        console.log(base64)
+        $http.post('/api/login', null, { headers: { Authorization: 'Basic ' + base64 } }).then((response) => response.data)
             .then((response) => {
+                console.log(response)
                 $location.path('/Dashboard');
             }).catch((error) => console.error(error))
     }
