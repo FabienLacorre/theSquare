@@ -156,12 +156,12 @@ func (b *ProfileManager) Search(pattern string) ([]*Profile, error) {
 
 		ci, ok := data[1].(graph.Node)
 		if !ok {
-			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[0][0]))
+			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[1]))
 		}
 
 		co, ok := data[2].(graph.Node)
 		if !ok {
-			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][0]))
+			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[2]))
 		}
 
 		profiles = append(profiles, &Profile{
