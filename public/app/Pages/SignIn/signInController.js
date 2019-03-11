@@ -13,8 +13,18 @@ SignIn.config(['$routeProvider', function ($routeProvider) {
 /**
  * @brief SignIn controller 
  */
-SignIn.controller('SignInController', function ($location) {
+SignIn.controller('SignInController', function ($location, $http) {
 
+    this.newUser = {
+        login: "",
+        password: "",
+        confirmPassword: "",
+        name: "",
+        surname: "",
+        birthDate: "",
+        country: "",
+        city: "",
+    }
     document.getElementById('test').style.display = "none";
 
     /**
@@ -30,6 +40,20 @@ SignIn.controller('SignInController', function ($location) {
      */
     this.validate = () => {
         console.log("validation account")
-        $location.path('/Profile');
+        console.log(this.newUser)
+
+        $http.post('/sign-in', {
+            login: this.newUser.login,
+            password: this.newUser.password,
+            name: this.newUser.name,
+            surname: this.newUser.surname,
+            birthDate: this.newUser.birthDate,
+            country: this.newUser.country,
+            city: this.newUser.city,
+        }).then(response => response.data)
+        .then((response) => {
+            console.log(response)
+            $location.path('/Profile');
+        }).catch((err) => console.error(err))
     }
 });
