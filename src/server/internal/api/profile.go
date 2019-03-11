@@ -15,10 +15,10 @@ import (
 )
 
 type ProfileService struct {
-	manager *dao.DataManager
+	manager *dao.ProfileManager
 }
 
-func NewProfileService(manager *dao.DataManager) *ProfileService {
+func NewProfileService(manager *dao.ProfileManager) *ProfileService {
 	return &ProfileService{manager}
 }
 
@@ -30,7 +30,7 @@ func (s *ProfileService) GetByID(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.manager.GetProfileWithID(id); err != nil {
+	if _, err := s.manager.GetProfileWithID(id); err != nil {
 		logrus.WithError(err).Error("cannot get profile with id")
 		http.Error(rw, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return

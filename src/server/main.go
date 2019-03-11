@@ -58,11 +58,10 @@ func run(ctx *cli.Context) error {
 	}
 	defer conn.Close()
 
-	loginManager := dao.NewLoginManager(conn)
-	dataManager := dao.NewDataManager(conn)
+	profileManager := dao.NewProfileManager(conn)
 
-	connectionService := api.NewConnectionService(loginManager)
-	profileService := api.NewProfileService(dataManager)
+	connectionService := api.NewConnectionService(profileManager)
+	profileService := api.NewProfileService(profileManager)
 
 	router := mux.NewRouter()
 
@@ -74,21 +73,20 @@ func run(ctx *cli.Context) error {
 	apiRouter.HandleFunc("/api/login", connectionService.Login).Methods("POST")
 	apiRouter.HandleFunc("/api/logout", connectionService.Logout).Methods("POST")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}", profileService.GetByID).Methods("GET")
-	apiRouter.PathPrefix("/api/").Handler(negroni.New(
+	router.PathPrefix("/api/").Handler(negroni.New(
 		negronilogrus.NewMiddleware(),
 		sessions.Sessions("session", store),
-		internal.AuthMiddleware(loginManager),
+		internal.AuthMiddleware(profileManager),
 		negroni.Wrap(apiRouter),
 	))
 
 	router.PathPrefix("/").Handler(negroni.New(
+		negronilogrus.NewMiddleware(),
 		negroni.NewStatic(http.Dir("../../public/app"))),
 	)
 
 	logrus.Infof("Listening on port 8080...")
 	http.ListenAndServe(":8080", router)
-
-	// router.PathPrefix("/sign-in")
 
 	return nil
 }

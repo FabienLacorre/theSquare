@@ -27,7 +27,7 @@ func init() {
 	gob.Register(key(0))
 }
 
-func AuthMiddleware(manager *dao.LoginManager) negroni.HandlerFunc {
+func AuthMiddleware(manager *dao.ProfileManager) negroni.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		session := sessions.GetSession(r)
 		logrus.Info("AUTH")

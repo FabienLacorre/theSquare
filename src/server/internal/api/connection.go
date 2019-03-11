@@ -19,7 +19,7 @@ import (
 )
 
 type ConnectionService struct {
-	loginManager *dao.LoginManager
+	profileManager *dao.ProfileManager
 }
 
 type signInForm struct {
@@ -32,8 +32,8 @@ type signInForm struct {
 	City      string `json:"city"`
 }
 
-func NewConnectionService(loginManager *dao.LoginManager) *ConnectionService {
-	return &ConnectionService{loginManager}
+func NewConnectionService(profileManager *dao.ProfileManager) *ConnectionService {
+	return &ConnectionService{profileManager}
 }
 
 func (s *ConnectionService) Login(rw http.ResponseWriter, req *http.Request) {
@@ -68,7 +68,7 @@ func (s *ConnectionService) SignIn(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if isExist, err := s.loginManager.IsAccountExists(form.Login); err != nil {
+	if isExist, err := s.profileManager.IsAccountExists(form.Login); err != nil {
 		logrus.
 			WithError(err).
 			WithField("login", form.Login).
@@ -81,7 +81,17 @@ func (s *ConnectionService) SignIn(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.loginManager.CreateAccount(form.Login, form.Password, form.Name, form.Surname, form.BirthDate, form.Country, form.City); err != nil {
+	p := &dao.Profile{
+		Login:     form.Login,
+		Password:  form.Password,
+		Firstname: form.Name,
+		Lastname:  form.Surname,
+		Birthday:  form.BirthDate,
+		Country:   form.Country,
+		City:      form.City,
+	}
+
+	if err := s.profileManager.Create(p); err != nil {
 		logrus.
 			WithError(err).
 			Error("cannot create account")

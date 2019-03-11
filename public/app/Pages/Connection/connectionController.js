@@ -23,7 +23,7 @@ Connection.controller('ConnectionController', function ($location, $http) {
      */
     this.tryToLogin = () => {
         // TO DO connection routine
-        $http.post('/api/login', null, { headers: { 'Authorization': 'Basic dG90bzp0YXRh' } }).then((response) => response.data)
+        $http.post('/api/login', null, { headers: { 'Authorization': 'Basic TWF4OkFiO3EqSWxl' } }).then((response) => response.data)
             .then((response) => {
                 $location.path('/Dashboard');
             }).catch((error) => console.error(error))
