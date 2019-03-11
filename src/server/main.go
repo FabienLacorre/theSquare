@@ -9,15 +9,22 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	
+
+	"server/internal"
+	"server/internal/api"
 	"server/internal/dao"
 	"server/internal/utils"
-	"server/internal/api"
 
-	"github.com/emicklei/go-restful"
+	sessions "github.com/goincremental/negroni-sessions"
+	"github.com/goincremental/negroni-sessions/cookiestore"
+	"github.com/gorilla/mux"
+	negronilogrus "github.com/meatballhat/negroni-logrus"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
+	"github.com/urfave/negroni"
 )
+
+var store = cookiestore.New([]byte("secret-session-key"))
 
 func createNeo4jURL(ctx *cli.Context) (string, error) {
 	login := ctx.GlobalString("neo4j-login")
@@ -51,11 +58,35 @@ func run(ctx *cli.Context) error {
 	}
 	defer conn.Close()
 
-	profileService := api.NewProfileService(dao.NewDataManager(conn))
-	restful.Add(profileService.Register("/api"))
+	profileManager := dao.NewProfileManager(conn)
+
+	connectionService := api.NewConnectionService(profileManager)
+	profileService := api.NewProfileService(profileManager)
+
+	router := mux.NewRouter()
+
+	router.HandleFunc("/sign-in", connectionService.SignIn).
+		Methods("POST", "PUT").
+		HeadersRegexp("Content-Type", "application/json")
+
+	apiRouter := mux.NewRouter()
+	apiRouter.HandleFunc("/api/login", connectionService.Login).Methods("POST")
+	apiRouter.HandleFunc("/api/logout", connectionService.Logout).Methods("POST")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}", profileService.GetByID).Methods("GET")
+	router.PathPrefix("/api/").Handler(negroni.New(
+		negronilogrus.NewMiddleware(),
+		sessions.Sessions("session", store),
+		internal.AuthMiddleware(profileManager),
+		negroni.Wrap(apiRouter),
+	))
+
+	router.PathPrefix("/").Handler(negroni.New(
+		negronilogrus.NewMiddleware(),
+		negroni.NewStatic(http.Dir("../../public/app"))),
+	)
 
 	logrus.Infof("Listening on port 8080...")
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", router)
 
 	return nil
 }

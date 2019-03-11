@@ -13,7 +13,7 @@ Connection.config(['$routeProvider', function ($routeProvider) {
 /**
  * @brief Connection controller 
  */
-Connection.controller('ConnectionController', function ($location) {
+Connection.controller('ConnectionController', function ($location, $http) {
 
     document.getElementById('test').style.display = "none";
 
@@ -23,7 +23,10 @@ Connection.controller('ConnectionController', function ($location) {
      */
     this.tryToLogin = () => {
         // TO DO connection routine
-        $location.path('/Dashboard');
+        $http.post('/api/login', null, { headers: { 'Authorization': 'Basic TWF4OkFiO3EqSWxl' } }).then((response) => response.data)
+            .then((response) => {
+                $location.path('/Dashboard');
+            }).catch((error) => console.error(error))
     }
 
     /**
