@@ -4,6 +4,7 @@
 angular.module('myApp', [
   'ngRoute',
   'ui.router',
+  'navBar',
   'Dashboard',
   'Connection',
   'Configuration',
