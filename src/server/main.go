@@ -52,13 +52,10 @@ func run(ctx *cli.Context) error {
 	}
 
 	logrus.WithField("url", url).Info("Trying to connect to Neo4j")
-	conn, err := utils.ConnectNeo4j(url)
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
+	driver := utils.ConnectNeo4j(url)
+	defer driver.Close()
 
-	profileManager := dao.NewProfileManager(conn)
+	profileManager := dao.NewProfileManager(driver)
 
 	connectionService := api.NewConnectionService(profileManager)
 	profileService := api.NewProfileService(profileManager)
@@ -81,7 +78,6 @@ func run(ctx *cli.Context) error {
 	))
 
 	router.PathPrefix("/").Handler(negroni.New(
-		negronilogrus.NewMiddleware(),
 		negroni.NewStatic(http.Dir("../../public/app"))),
 	)
 
