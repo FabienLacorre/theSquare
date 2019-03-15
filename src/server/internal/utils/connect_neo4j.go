@@ -5,7 +5,6 @@
 package utils
 
 import (
-	"errors"
 	"time"
 
 	bolt "github.com/moutoum/golang-neo4j-bolt-driver"
@@ -13,29 +12,31 @@ import (
 )
 
 const (
-	timeBetweenRetry = 1 * time.Second
-	timeBeforeLeave  = 10 * time.Second
+	timeBetweenRetry        = 1 * time.Second
+	timeBeforeLeave         = 10 * time.Second
+	maxNeo4jPoolConnections = 64
 )
 
-func ConnectNeo4j(url string) (bolt.Conn, error) {
-	var (
-		conn bolt.Conn
-		err  error
-	)
+func ConnectNeo4j(url string) (driver bolt.ClosableDriverPool) {
+	var err error
 
-	driv := bolt.NewDriver()
 	ticker := time.Tick(timeBetweenRetry)
 	limit := time.Now().Add(timeBeforeLeave)
 
+retryLoop:
 	for t := <-ticker; t.Before(limit); t = <-ticker {
-		if conn, err = driv.OpenNeo(url); err != nil {
-			conn = nil
-			logrus.WithError(err).Warn("cannot open neo4j conn")
+		driver, err = bolt.NewClosableDriverPool(url, maxNeo4jPoolConnections)
+		if err != nil {
+			logrus.WithError(err).Warning("cannot open neo4j driver pool")
+			continue
+		} else {
+			break retryLoop
 		}
 	}
-	if conn == nil {
-		return nil, errors.New("cannot open neo4j connection")
+
+	if err != nil {
+		logrus.WithError(err).Fatal("cannot open neo4j driver pool")
 	}
 
-	return conn, nil
+	return driver
 }

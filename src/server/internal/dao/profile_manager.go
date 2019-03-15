@@ -25,15 +25,21 @@ type Profile struct {
 }
 
 type ProfileManager struct {
-	conn bolt.Conn
+	pool bolt.DriverPool
 }
 
-func NewProfileManager(conn bolt.Conn) *ProfileManager {
-	return &ProfileManager{conn}
+func NewProfileManager(pool bolt.DriverPool) *ProfileManager {
+	return &ProfileManager{pool}
 }
 
 func (m *ProfileManager) VerifyCreditentials(login, password string) (bool, error) {
-	rows, err := m.conn.QueryNeo("MATCH (p:Profile) WHERE p.login = {login} AND p.password = {password} RETURN p LIMIT 1", map[string]interface{}{
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return false, err
+	}
+	defer conn.Close()
+
+	rows, err := conn.QueryNeo("MATCH (p:Profile) WHERE p.login = {login} AND p.password = {password} RETURN p LIMIT 1", map[string]interface{}{
 		"login":    login,
 		"password": password,
 	})
@@ -53,7 +59,13 @@ func (m *ProfileManager) VerifyCreditentials(login, password string) (bool, erro
 }
 
 func (m *ProfileManager) IsAccountExists(login string) (bool, error) {
-	rows, err := m.conn.QueryNeo("MATCH (p:Profile) WHERE p.login = {login} RETURN p LIMIT 1", map[string]interface{}{
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return false, err
+	}
+	defer conn.Close()
+
+	rows, err := conn.QueryNeo("MATCH (p:Profile) WHERE p.login = {login} RETURN p LIMIT 1", map[string]interface{}{
 		"login": login,
 	})
 
@@ -72,7 +84,13 @@ func (m *ProfileManager) IsAccountExists(login string) (bool, error) {
 }
 
 func (b *ProfileManager) GetProfileWithID(id int) (*Profile, error) {
-	r, err := b.conn.QueryNeo(`
+	conn, err := b.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	r, err := conn.QueryNeo(`
 		MATCH (p:Profile)-[:Lives]->(ci:City)-[:Located]->(co:Country)
 		WHERE ID(p) = {id}
 		RETURN p, ci, co
@@ -127,7 +145,13 @@ func (b *ProfileManager) GetProfileWithID(id int) (*Profile, error) {
 }
 
 func (b *ProfileManager) Search(pattern string) ([]*Profile, error) {
-	r, err := b.conn.QueryNeo(`
+	conn, err := b.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	r, err := conn.QueryNeo(`
 		MATCH (p:Profile)-[:Lives]->(ci:City)-[:Located]->(co:Country) 
 		WHERE 
 			p.firstname CONTAINS {pattern} OR
@@ -179,7 +203,13 @@ func (b *ProfileManager) Search(pattern string) ([]*Profile, error) {
 }
 
 func (m *ProfileManager) Create(p *Profile) error {
-	_, err := m.conn.ExecNeo(`
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = conn.ExecNeo(`
 		MERGE (co:Country{ name: {country_name} })
 		MERGE (ci:City{ name: {city_name} })
 		CREATE (p:Profile{
