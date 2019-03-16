@@ -30,7 +30,6 @@ func init() {
 func AuthMiddleware(manager *dao.ProfileManager) negroni.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		session := sessions.GetSession(r)
-		logrus.Info("AUTH")
 
 		isConnected, ok := session.Get(ConnectedKey).(bool)
 		if !ok || !isConnected {

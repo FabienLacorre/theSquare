@@ -62,14 +62,21 @@ func run(ctx *cli.Context) error {
 
 	router := mux.NewRouter()
 
+	// sign in
 	router.HandleFunc("/sign-in", connectionService.SignIn).
 		Methods("POST", "PUT").
 		HeadersRegexp("Content-Type", "application/json")
 
 	apiRouter := mux.NewRouter()
+
+	// auths
 	apiRouter.HandleFunc("/api/login", connectionService.Login).Methods("POST")
 	apiRouter.HandleFunc("/api/logout", connectionService.Logout).Methods("POST")
+
+	// profile
+	apiRouter.HandleFunc("/api/profile", profileService.GetCurrent).Methods("GET")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}", profileService.GetByID).Methods("GET")
+
 	router.PathPrefix("/api/").Handler(negroni.New(
 		negronilogrus.NewMiddleware(),
 		sessions.Sessions("session", store),
@@ -77,6 +84,7 @@ func run(ctx *cli.Context) error {
 		negroni.Wrap(apiRouter),
 	))
 
+	// static files
 	router.PathPrefix("/").Handler(negroni.New(
 		negroni.NewStatic(http.Dir("../../public/app"))),
 	)

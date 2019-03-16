@@ -17,11 +17,11 @@ import (
 type Profile struct {
 	Login     string
 	Password  string
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-	Birthday  string `json:"birthday"`
-	Country   string `json:"country"`
-	City      string `json:"city"`
+	Firstname string
+	Lastname  string
+	Birthday  string
+	Country   string
+	City      string
 }
 
 type ProfileManager struct {
@@ -113,6 +113,67 @@ func (b *ProfileManager) GetProfileWithID(id int) (*Profile, error) {
 
 	if len(results) == 0 {
 		return nil, fmt.Errorf("profile with id = %d not found", id)
+	}
+
+	p, ok := results[0][0].(graph.Node)
+
+	if !ok {
+		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][0]))
+	}
+
+	ci, ok := results[0][1].(graph.Node)
+	if !ok {
+		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][0]))
+	}
+
+	co, ok := results[0][2].(graph.Node)
+	if !ok {
+		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][0]))
+	}
+
+	profile := &Profile{
+		Login:     p.Properties["login"].(string),
+		Password:  p.Properties["password"].(string),
+		Firstname: p.Properties["firstname"].(string),
+		Lastname:  p.Properties["lastname"].(string),
+		Birthday:  p.Properties["birthday"].(string),
+		Country:   co.Properties["name"].(string),
+		City:      ci.Properties["name"].(string),
+	}
+
+	return profile, nil
+}
+
+func (m *ProfileManager) GetByLogin(login string) (*Profile, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	r, err := conn.QueryNeo(`
+		MATCH (p:Profile)-[:Lives]->(ci:City)-[:Located]->(co:Country)
+		WHERE p.login = {login}
+		RETURN p, ci, co
+		LIMIT 1`,
+		map[string]interface{}{
+			"login": login,
+		})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer r.Close()
+
+	results, _, err := r.All()
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(results) == 0 {
+		return nil, ErrNotFound
 	}
 
 	p, ok := results[0][0].(graph.Node)
