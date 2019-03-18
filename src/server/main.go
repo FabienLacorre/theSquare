@@ -56,9 +56,9 @@ func run(ctx *cli.Context) error {
 	defer driver.Close()
 
 	profileManager := dao.NewProfileManager(driver)
+	companyManager := dao.NewCompanyManager(driver)
 
 	connectionService := api.NewConnectionService(profileManager)
-	profileService := api.NewProfileService(profileManager)
 
 	router := mux.NewRouter()
 
@@ -74,6 +74,7 @@ func run(ctx *cli.Context) error {
 	apiRouter.HandleFunc("/api/logout", connectionService.Logout).Methods("POST")
 
 	// profile
+	profileService := api.NewProfileService(profileManager)
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}", profileService.Get).Methods("GET")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/companies", profileService.GetCompanies).Methods("GET")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/companies/{company_id:[0-9]+}", profileService.PostCompany).Methods("POST")
@@ -85,6 +86,10 @@ func run(ctx *cli.Context) error {
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/follow/{profile_id:[0-9]+}", profileService.Follow).Methods("POST")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/jobs", profileService.GetJobs).Methods("GET")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/jobs/{job_id:[0-9]+}", profileService.PostJob).Methods("POST")
+
+	// companies
+	companyService := api.NewCompanyService(companyManager)
+	apiRouter.HandleFunc("/api/company/{id:[0-9]+}", companyService.Get).Methods("GET")
 
 	router.PathPrefix("/api/").Handler(negroni.New(
 		negronilogrus.NewMiddleware(),
