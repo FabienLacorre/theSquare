@@ -33,6 +33,7 @@ Connection.controller('ConnectionController', function ($location, $http) {
         $http.post('/api/login', null, { headers: { Authorization: 'Basic ' + base64 } }).then((response) => response.data)
             .then((response) => {
                 console.log(response)
+                window.localStorage.setItem('id', response.id);
                 $location.path('/Dashboard');
             }).catch((error) => console.error(error))
     }

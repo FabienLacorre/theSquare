@@ -1,6 +1,6 @@
 <style>
     .meDiv {
-        height: 380px;
+        height: 390px;
         width: 100%;
         background-color: rgba(0, 0, 20, 0.7);
         margin-right: 10px;
@@ -22,19 +22,43 @@
     }
 
     .friendsDiv {
-        height: 800px;
+        height: 390px;
         width: 100%;
         background-color: rgba(0, 0, 20, 0.7);
         margin-right: 10px;
         padding-top: 15px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-top-left-radius: 15px;
+        overflow: auto;
+    }
 
+    .jobsDiv {
+        height: 390px;
+        width: 100%;
+        background-color: rgba(0, 0, 20, 0.7);
+        margin-right: 10px;
+        padding-top: 15px;
+        padding: 15px;
         border-top-left-radius: 15px;
         overflow: auto;
     }
 
     .hobbiesDiv {
-        height: 800px;
+        height: 390px;
         padding-top: 15px;
+        padding: 15px;
+        width: 100%;
+        background-color: rgba(0, 0, 20, 0.7);
+        border-top-left-radius: 15px;
+        overflow: auto;
+        margin-bottom: 20px;
+    }
+
+    .skillsDiv {
+        height: 390px;
+        padding-top: 15px;
+        padding: 15px;
         width: 100%;
         background-color: rgba(0, 0, 20, 0.7);
         border-top-left-radius: 15px;
@@ -42,8 +66,8 @@
     }
 
     .photoProfile {
-        width: 300px;
-        height: 300px;
+        width: 200px;
+        height: 200px;
         border-top-left-radius: 10px;
         overflow: hidden;
     }
@@ -93,7 +117,7 @@
         text-align: center;
         border: 2px solid white;
         padding: 14px 10px;
-        width: 400px;
+        width: 180px;
         outline: none;
         color: white;
         border-radius: 24px;
@@ -110,42 +134,43 @@
 <div class="content" style="margin-top:20px;">
     <div class="">
         <div class="row">
-            <div class="col-md-5">
+            <div class="col-md-3">
                 <div class="meDiv">
                     <h2 style="color:white">Profile</h2>
                     <div class="row">
-                        <div class="col-md-5">
+                        <div class="col-md-6">
                             <div class="photoProfile">
                                 <img src="../../img/test.jpg">
                             </div>
                         </div>
                         <div class="col-md-5" style=" position: relative;">
-                            <span>{{$ctrl.me.name}}</span>
-                            <span>{{$ctrl.me.surname}}</span>
+                            <span>{{$ctrl.me.firstname}}</span>
+                            <span>{{$ctrl.me.lastname}}</span>
                             <br>
-                            <span>{{$ctrl.me.age}}</span>
+                            <span>{{$ctrl.me.birthday}}</span>
+                            <br>
+                            <span>{{$ctrl.me.country}}</span>
                             <br>
                             <span>{{$ctrl.me.city}}</span>
                             <br>
-                            <div style=" position:absolute; bottom:0px;">
-                                <button class="btn btn-primary" ng-click="$ctrl.clickModify()">Change
+                            <div>
+                                <button style="margin-bottom: 10px;" class="btn btn-primary"
+                                    ng-click="$ctrl.clickModify()">Change
                                     password</button>
                                 <div ng-if="$ctrl.changePasswordBool === true">
                                     <input type="text" class="inputPasswordProfile" placeholder="New password">
-                                    <button style="width: 100%" class="btn btn-primary" ng-click="$ctrl.validateChangePassword()">Valider</button>
+                                    <button style="width: 100%" class="btn btn-primary"
+                                        ng-click="$ctrl.validateChangePassword()">Valider</button>
                                 </div>
                             </div>
                         </div>
-
-
-
                     </div>
                 </div>
                 <div class="companieDiv">
                     <h2 style="color:white">companies</h2>
                     <div>
                         <div class="subBox" ng-repeat="companie in $ctrl.companies track by $index"
-                            ng-click="$ctrl.moveToDetails('companie')">
+                            ng-click="$ctrl.moveToDetails('companie', companie.id)">
                             <div class="photo">
                                 <img ng-src="{{companie.photo}}">
                             </div>
@@ -167,58 +192,115 @@
                 </div>
             </div>
 
-            <div class="col-md-3 friendsDiv">
-                <h2 style="color:white">Friends</h2>
-                <div>
-                    <div class="subBox" ng-repeat="friend in $ctrl.friends track by $index"
-                        ng-click="$ctrl.moveToDetails('friend')">
-                        <div class="photo">
-                            <img ng-src="{{friend.photo}}">
-                        </div>
-                        <div class="info">
-                            <span>{{friend.name}}</span>
-                            <div class="float-right">
-                                <button style="margin-bottom: 5px;" class="btn btn-primary"
-                                    ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
-                                        class="fa fa-thumbs-up"></span></button>
-                                <br>
-                                <button class="btn btn-danger"
-                                    ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
-                                        class="fa fa-thumbs-down"></span></button>
+            <div class="col-md-4">
+                <div class="friendsDiv">
+                    <h2 style="color:white">Friends</h2>
+                    <div>
+                        <div class="subBox" ng-repeat="friend in $ctrl.friends track by $index"
+                            ng-click="$ctrl.moveToDetails('friend', friend.id)">
+                            <div class="photo">
+                                <img ng-src="{{friend.photo}}">
                             </div>
-                            <span>{{friend.surname}}</span>
-                            <br>
-                            <span>{{friend.age}}</span>
-                            <br>
-                            <span>{{friend.city}}</span>
+                            <div class="info">
+                                <span>{{friend.name}}</span>
+                                <div class="float-right">
+                                    <button style="margin-bottom: 5px;" class="btn btn-primary"
+                                        ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
+                                            class="fa fa-thumbs-up"></span></button>
+                                    <br>
+                                    <button class="btn btn-danger"
+                                        ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
+                                            class="fa fa-thumbs-down"></span></button>
+                                </div>
+                                <span>{{friend.surname}}</span>
+                                <br>
+                                <span>{{friend.age}}</span>
+                                <br>
+                                <span>{{friend.city}}</span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="jobsDiv">
+                    <h2 style="color:white">Jobs</h2>
+                    <div>
+                        <div class="subBox" ng-repeat="job in $ctrl.jobs track by $index"
+                            ng-click="$ctrl.moveToDetails('job', job.id)">
+                            <div class="photo">
+                                <img ng-src="{{job.photo}}">
+                            </div>
+                            <div class="info">
+                                <span>{{job.name}}</span>
+                                <div class="float-right">
+                                    <button style="margin-bottom: 5px;" class="btn btn-primary"
+                                        ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
+                                            class="fa fa-thumbs-up"></span></button>
+                                    <br>
+                                    <button class="btn btn-danger"
+                                        ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
+                                            class="fa fa-thumbs-down"></span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="hobbiesDiv">
+                    <h2 style="color:white">Hobbies</h2>
+                    <div>
+                        <div class="subBox" ng-repeat="hobbie in $ctrl.hobbies track by $index"
+                            ng-click="$ctrl.moveToDetails('hobbie', hobbie.id)">
+                            <div class="photo">
+                                <img ng-src="{{hobbie.photo}}">
+                            </div>
+                            <div class="info">
+                                <span>{{hobbie.name}}</span>
+                                <div class="float-right">
+                                    <button style="margin-bottom: 5px;" class="btn btn-primary"
+                                        ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
+                                            class="fa fa-thumbs-up"></span></button>
+                                    <br>
+                                    <button class="btn btn-danger"
+                                        ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
+                                            class="fa fa-thumbs-down"></span></button>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
                 </div>
 
-            </div>
 
-            <div class="col-md-3 hobbiesDiv">
-                <h2 style="color:white">Hobbies</h2>
-                <div>
-                    <div class="subBox" ng-repeat="hobbie in $ctrl.hobbies track by $index"
-                        ng-click="$ctrl.moveToDetails('hobbie')">
-                        <div class="photo">
-                            <img ng-src="{{hobbie.photo}}">
-                        </div>
-                        <div class="info">
-                            <span>{{hobbie.name}}</span>
-                            <div class="float-right">
-                                <button style="margin-bottom: 5px;" class="btn btn-primary"
-                                    ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
-                                        class="fa fa-thumbs-up"></span></button>
-                                <br>
-                                <button class="btn btn-danger"
-                                    ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
-                                        class="fa fa-thumbs-down"></span></button>
+                <div class="skillsDiv">
+                    <h2 style="color:white">Skills</h2>
+                    <div>
+                        <div class="subBox" ng-repeat="skill in $ctrl.skills track by $index"
+                            ng-click="$ctrl.moveToDetails('skill', skill.id)">
+                            <div class="photo">
+                                <img ng-src="{{skill.photo}}">
                             </div>
-                        </div>
+                            <div class="info">
+                                <span>{{skill.name}}</span>
+                                <div class="float-right">
+                                    <button style="margin-bottom: 5px;" class="btn btn-primary"
+                                        ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
+                                            class="fa fa-thumbs-up"></span></button>
+                                    <br>
+                                    <button class="btn btn-danger"
+                                        ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
+                                            class="fa fa-thumbs-down"></span></button>
+                                </div>
+                            </div>
 
+                        </div>
                     </div>
                 </div>
             </div>

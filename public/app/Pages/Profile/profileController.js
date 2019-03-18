@@ -13,9 +13,52 @@ Profile.config(['$routeProvider', function ($routeProvider) {
 /**
  * @brief Profile controller
  */
-Profile.controller('ProfileController', function ($location) {
+Profile.controller('ProfileController', function ($location, $http, $scope) {
   console.log("hello dashboar controller")
+  this.userId = localStorage.getItem("id");
   document.getElementById('test').style.display = "";
+  this.hobbies = [];
+  this.companies = [];
+  this.skills = [];
+  this.friends = [];
+  this.jobs = [];
+
+
+  this.me = undefined;
+
+  $http.get('/api/profile/' + this.userId)
+    .then((response) => response.data)
+    .then((response) => {
+      console.log(response);
+      this.me = response
+
+      const promises = []
+
+      promises.push($http.get('/api/profile/' + this.userId + "/companies"))
+      promises.push($http.get('/api/profile/' + this.userId + "/hobbies"))
+      promises.push($http.get('/api/profile/' + this.userId + "/skills"))
+      promises.push($http.get('/api/profile/' + this.userId + "/followed"))
+      promises.push($http.get('/api/profile/' + this.userId + "/jobs"))
+
+      Promise.all(promises)
+        .then((responses) => {
+          responses = responses.map(elem => elem.data)
+          // this.companies = responses[0];
+          this.hobbies = responses[1];
+          // this.skills = responses[2];
+          // this.friends = response[3];
+          // this.jobs = response[4];
+          this.hobbies.forEach((elem) => {
+            elem.photo = "../../img/test.jpg"
+          })
+          if (!$scope.$$phase) {
+            $scope.$apply();
+          }
+          console.log(this.hobbies)
+        }).catch((err) => alert("ERROR" + err))
+    })
+
+
 
   this.changePasswordBool = false;
 
@@ -27,19 +70,9 @@ Profile.controller('ProfileController', function ($location) {
    * @brief validation changement mot de passe handler button
    */
   this.validateChangePassword = () => {
-    console.log("MODIFICATION PASSWORD CLICK")
     this.changePasswordBool = false;
   }
 
-  this.me = {
-    name: "LACORRE",
-    surname: "Fabien",
-    age: 25,
-    city: "Rennes",
-    friends: [],
-  }
-
-  this.friends = []
   for (let i = 0; i < 10; i++) {
     this.friends.push({
       name: "toto",
@@ -49,16 +82,7 @@ Profile.controller('ProfileController', function ($location) {
       photo: "../../img/test.jpg"
     })
   }
-
-  this.hobbies = []
-  for (let i = 0; i < 10; i++) {
-    this.hobbies.push({
-      name: "hobbies test " + i,
-      photo: "../../img/test.jpg"
-    })
-  }
-
-  this.companies = []
+  
   for (let i = 0; i < 10; i++) {
     this.companies.push({
       name: "Apple",
@@ -66,12 +90,26 @@ Profile.controller('ProfileController', function ($location) {
     })
   }
 
+  for (let i = 0; i < 10; i++) {
+    this.skills.push({
+      name: "C++",
+      photo: "../../img/test.jpg",
+    })
+  }
+
+  for (let i = 0; i < 10; i++) {
+    this.jobs.push({
+      name: "Developper",
+      photo: "../../img/test.jpg",
+    })
+  }
+
   /**
    * @brief change location page for detail page
    */
-  this.moveToDetails = (type) => {
+  this.moveToDetails = (type, id) => {
     console.log("move to details")
-    $location.path('/Details/' + type)
+    $location.path('/Details/' + type + "/" + id)
   }
 
   /**

@@ -17,6 +17,7 @@ Dashboard.controller('DashboardController', function ($location) {
   console.log("hello dashboar controller")
   document.getElementById('test').style.display = "";
 
+  console.log(localStorage.getItem("id"));
   this.dashboardObjects = []
 
   /**
