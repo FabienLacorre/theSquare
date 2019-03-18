@@ -65,6 +65,19 @@ func (s *ProfileService) GetCompanies(rw http.ResponseWriter, req *http.Request)
 	rw.Write(datas)
 }
 
+func (s *ProfileService) PostCompany(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+	companyID, _ := strconv.Atoi(vars["company_id"])
+
+	if err := s.manager.PostCompany(id, companyID); err != nil {
+		internalServerError(rw, "cannot PostCompany", err)
+		return
+	}
+
+	rw.WriteHeader(http.StatusOK)
+}
+
 func (s *ProfileService) GetHobbies(rw http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id, _ := strconv.Atoi(vars["id"])
@@ -83,6 +96,19 @@ func (s *ProfileService) GetHobbies(rw http.ResponseWriter, req *http.Request) {
 
 	rw.Header().Set("Content-type", "application/json")
 	rw.Write(datas)
+}
+
+func (s *ProfileService) PostHobby(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+	hobbyID, _ := strconv.Atoi(vars["hobby_id"])
+
+	if err := s.manager.PostHobby(id, hobbyID); err != nil {
+		internalServerError(rw, "cannot PostHobby", err)
+		return
+	}
+
+	rw.WriteHeader(http.StatusOK)
 }
 
 func (s *ProfileService) GetSkills(rw http.ResponseWriter, req *http.Request) {
@@ -105,6 +131,19 @@ func (s *ProfileService) GetSkills(rw http.ResponseWriter, req *http.Request) {
 	rw.Write(data)
 }
 
+func (s *ProfileService) PostSkill(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+	skillID, _ := strconv.Atoi(vars["skill_id"])
+
+	if err := s.manager.PostSkill(id, skillID); err != nil {
+		internalServerError(rw, "cannot PostSkill", err)
+		return
+	}
+
+	rw.WriteHeader(http.StatusOK)
+}
+
 func (s *ProfileService) GetFollowed(rw http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id, _ := strconv.Atoi(vars["id"])
@@ -125,6 +164,19 @@ func (s *ProfileService) GetFollowed(rw http.ResponseWriter, req *http.Request) 
 	rw.Write(data)
 }
 
+func (s *ProfileService) Follow(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+	profileID, _ := strconv.Atoi(vars["profile_id"])
+
+	if err := s.manager.Follow(id, profileID); err != nil {
+		internalServerError(rw, "cannot Follow", err)
+		return
+	}
+
+	rw.WriteHeader(http.StatusOK)
+}
+
 func (s *ProfileService) GetJobs(rw http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id, _ := strconv.Atoi(vars["id"])
@@ -143,4 +195,17 @@ func (s *ProfileService) GetJobs(rw http.ResponseWriter, req *http.Request) {
 
 	rw.Header().Set("Content-type", "application/json")
 	rw.Write(data)
+}
+
+func (s *ProfileService) PostJob(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+	jobID, _ := strconv.Atoi(vars["job_id"])
+
+	if err := s.manager.PostJob(id, jobID); err != nil {
+		internalServerError(rw, "cannot PostJob", err)
+		return
+	}
+
+	rw.WriteHeader(http.StatusOK)
 }

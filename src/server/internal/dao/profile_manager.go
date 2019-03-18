@@ -280,6 +280,29 @@ func (m *ProfileManager) GetCompanies(profileID int) ([]*Company, error) {
 	return companies, nil
 }
 
+func (m *ProfileManager) PostCompany(profileID, companyID int) error {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = conn.ExecNeo(`
+		MATCH (p:Profile), (c:Company)
+		WHERE ID(p) = {profileID} AND ID(c) = {companyID}
+		MERGE (p)-[:Likes]->(c)`,
+		map[string]interface{}{
+			"profileID": profileID,
+			"companyID": companyID,
+		})
+
+	if err != nil {
+		return fmt.Errorf("cannot query: %v", err)
+	}
+
+	return nil
+}
+
 func (m *ProfileManager) GetHobbies(profileID int) ([]*Hobby, error) {
 	conn, err := m.pool.OpenPool()
 	if err != nil {
@@ -317,6 +340,29 @@ func (m *ProfileManager) GetHobbies(profileID int) ([]*Hobby, error) {
 	return hobbies, nil
 }
 
+func (m *ProfileManager) PostHobby(profileID, hobbyID int) error {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = conn.ExecNeo(`
+		MATCH (p:Profile), (c:Hobby)
+		WHERE ID(p) = {profileID} AND ID(c) = {hobbyID}
+		MERGE (p)-[:Likes]->(c)`,
+		map[string]interface{}{
+			"profileID": profileID,
+			"hobbyID":   hobbyID,
+		})
+
+	if err != nil {
+		return fmt.Errorf("cannot query: %v", err)
+	}
+
+	return nil
+}
+
 func (m *ProfileManager) GetSkills(profileID int) ([]*Skill, error) {
 	conn, err := m.pool.OpenPool()
 	if err != nil {
@@ -352,6 +398,29 @@ func (m *ProfileManager) GetSkills(profileID int) ([]*Skill, error) {
 	}
 
 	return skills, nil
+}
+
+func (m *ProfileManager) PostSkill(profileID, skillID int) error {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = conn.ExecNeo(`
+		MATCH (p:Profile), (c:Skill)
+		WHERE ID(p) = {profileID} AND ID(c) = {skillID}
+		MERGE (p)-[:Uses]->(c)`,
+		map[string]interface{}{
+			"profileID": profileID,
+			"skillID":   skillID,
+		})
+
+	if err != nil {
+		return fmt.Errorf("cannot query: %v", err)
+	}
+
+	return nil
 }
 
 func (m *ProfileManager) GetFollowed(profileID int) ([]*Profile, error) {
@@ -411,6 +480,29 @@ func (m *ProfileManager) GetFollowed(profileID int) ([]*Profile, error) {
 	return profiles, nil
 }
 
+func (m *ProfileManager) Follow(profileID, profileIDToFollow int) error {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = conn.ExecNeo(`
+		MATCH (p:Profile), (c:Profile)
+		WHERE ID(p) = {profileID} AND ID(c) = {profileIDToFollow}
+		MERGE (p)-[:Follow]->(c)`,
+		map[string]interface{}{
+			"profileID":         profileID,
+			"profileIDToFollow": profileIDToFollow,
+		})
+
+	if err != nil {
+		return fmt.Errorf("cannot query: %v", err)
+	}
+
+	return nil
+}
+
 func (m *ProfileManager) GetJobs(profileID int) ([]*Job, error) {
 	conn, err := m.pool.OpenPool()
 	if err != nil {
@@ -448,4 +540,27 @@ func (m *ProfileManager) GetJobs(profileID int) ([]*Job, error) {
 	}
 
 	return jobs, nil
+}
+
+func (m *ProfileManager) PostJob(profileID, jobID int) error {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = conn.ExecNeo(`
+		MATCH (p:Profile), (j:Job)
+		WHERE ID(p) = {profileID} AND ID(j) = {jobID}
+		MERGE (p)-[:Likes]->(j)`,
+		map[string]interface{}{
+			"profileID": profileID,
+			"jobID":     jobID,
+		})
+
+	if err != nil {
+		return fmt.Errorf("cannot query: %v", err)
+	}
+
+	return nil
 }
