@@ -40,7 +40,7 @@ func AuthMiddleware(manager *dao.ProfileManager) negroni.HandlerFunc {
 				return
 			}
 
-			ok, err := manager.VerifyCreditentials(login, password)
+			id, err := manager.VerifyCreditentials(login, password)
 			if err != nil {
 				session.Set(ConnectedKey, false)
 				http.Error(rw, "cannot verify creditentials", http.StatusInternalServerError)
@@ -48,14 +48,14 @@ func AuthMiddleware(manager *dao.ProfileManager) negroni.HandlerFunc {
 				return
 			}
 
-			if !ok {
+			if id == -1 {
 				session.Set(ConnectedKey, false)
 				http.Error(rw, "invalid creditentials informations", http.StatusUnauthorized)
 				return
 			}
 
 			session.Set(ConnectedKey, true)
-			session.Set(LoginKey, login)
+			session.Set(LoginKey, id)
 		}
 
 		next(rw, r)

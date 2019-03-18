@@ -1,59 +1,45 @@
 package dao
 
-import (
-	"fmt"
-	"io"
+// func (b *DataManager) GetJobWithName(pattern string) error {
+// 	var results []Job
 
-	"github.com/johnnadratowski/golang-neo4j-bolt-driver/structures/graph"
-)
+// 	r, err := b.conn.QueryNeo("MATCH (j:Job) WHERE j.name CONTAINS {pattern} RETURN j", map[string]interface{}{
+// 		"pattern": pattern,
+// 	})
+// 	if err != nil {
+// 		return fmt.Errorf("cannot query: %v", err)
+// 	}
+// 	defer r.Close()
 
-type Job struct {
-	name        string `json:"name"`
-	description string `json:"description"`
-	grossWage   string `json:"grossWage"`
-}
+// 	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
+// 		d := data[0].(graph.Node)
 
-func (b *DataManager) GetJobWithName(pattern string) error {
-	var results []Job
+// 		p := Job{
+// 			Name:        d.Properties["name"].(string),
+// 			Description: d.Properties["description"].(string),
+// 			GrossWage:   d.Properties["grossWage"].(string),
+// 		}
+// 		results = append(results, p)
+// 	}
 
-	r, err := b.conn.QueryNeo("MATCH (j:Job) WHERE j.name CONTAINS {pattern} RETURN j", map[string]interface{}{
-		"pattern": pattern,
-	})
-	if err != nil {
-		return fmt.Errorf("cannot query: %v", err)
-	}
-	defer r.Close()
+// 	for i := range results {
+// 		fmt.Println(results[i].Name)
+// 		fmt.Println(results[i].Description)
+// 		fmt.Println(results[i].GrossWage)
+// 	}
 
-	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
-		d := data[0].(graph.Node)
+// 	return nil
+// }
 
-		p := Job{
-			name:        d.Properties["name"].(string),
-			description: d.Properties["description"].(string),
-			grossWage:   d.Properties["grossWage"].(string),
-		}
-		results = append(results, p)
-	}
+// func (b *DataManager) SetJob(name string, description string, grossWage string) error {
+// 	_, err := b.conn.ExecNeo("CREATE (j:Job {name: {name}, description: {description}, grossWage: {grossWage}})", map[string]interface{}{
+// 		"name":        name,
+// 		"description": description,
+// 		"grossWage":   grossWage,
+// 	})
+// 	if err != nil {
+// 		return fmt.Errorf("cannot query: %v", err)
+// 	}
 
-	for i := range results {
-		fmt.Println(results[i].name)
-		fmt.Println(results[i].description)
-		fmt.Println(results[i].grossWage)
-	}
-
-	return nil
-}
-
-func (b *DataManager) SetJob(name string, description string, grossWage string) error {
-	_, err := b.conn.ExecNeo("CREATE (j:Job {name: {name}, description: {description}, grossWage: {grossWage}})", map[string]interface{}{
-		"name":        name,
-		"description": description,
-		"grossWage":   grossWage,
-	})
-	if err != nil {
-		return fmt.Errorf("cannot query: %v", err)
-	}
-
-	return nil
-}
-
+// 	return nil
+// }
