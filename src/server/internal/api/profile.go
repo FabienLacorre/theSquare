@@ -7,12 +7,8 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"server/internal"
 	"server/internal/dao"
 	"strconv"
-
-	sessions "github.com/goincremental/negroni-sessions"
-	"github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
 )
@@ -21,62 +17,22 @@ type ProfileService struct {
 	manager *dao.ProfileManager
 }
 
-type profile struct {
-	Login     string `json:"login"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Birthday  string `json:"birthday"`
-	City      string `json:"city"`
-	Country   string `json:"country"`
-}
-
 func NewProfileService(manager *dao.ProfileManager) *ProfileService {
 	return &ProfileService{manager}
 }
 
-func (s *ProfileService) GetByID(rw http.ResponseWriter, req *http.Request) {
+func (s *ProfileService) Get(rw http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		http.Error(rw, "id must be a number", http.StatusBadRequest)
-		return
-	}
+	id, _ := strconv.ParseInt(vars["id"], 10, 64)
 
-	if _, err := s.manager.GetProfileWithID(id); err != nil {
-		logrus.WithError(err).Error("cannot get profile with id")
-		http.Error(rw, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-
-	rw.Write([]byte("Everything ok"))
-}
-
-func (s *ProfileService) GetCurrent(rw http.ResponseWriter, req *http.Request) {
-	session := sessions.GetSession(req)
-
-	login, ok := session.Get(internal.LoginKey).(string)
-	if !ok {
-		internalServerError(rw, "cannot get login from session (invalid type)", nil)
-		return
-	}
-
-	daoProfile, err := s.manager.GetByLogin(login)
+	profile, err := s.manager.GetByID(id)
 	if err != nil {
 		if err == dao.ErrNotFound {
 			http.NotFound(rw, req)
 			return
 		}
-		internalServerError(rw, "cannot GetByLogin", err)
+		internalServerError(rw, "cannot GetByID", err)
 		return
-	}
-
-	profile := profile{
-		Login:     daoProfile.Login,
-		FirstName: daoProfile.Firstname,
-		LastName:  daoProfile.Lastname,
-		Birthday:  daoProfile.Birthday,
-		City:      daoProfile.City,
-		Country:   daoProfile.Country,
 	}
 
 	datas, err := json.Marshal(profile)
@@ -87,4 +43,104 @@ func (s *ProfileService) GetCurrent(rw http.ResponseWriter, req *http.Request) {
 
 	rw.Header().Set("Content-type", "application/json")
 	rw.Write(datas)
+}
+
+func (s *ProfileService) GetCompanies(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+
+	daoCompanies, err := s.manager.GetCompanies(id)
+	if err != nil {
+		internalServerError(rw, "cannot GetCompanies", err)
+		return
+	}
+
+	datas, err := json.Marshal(daoCompanies)
+	if err != nil {
+		internalServerError(rw, "cannot marshal Company type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(datas)
+}
+
+func (s *ProfileService) GetHobbies(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+
+	daoHobbies, err := s.manager.GetHobbies(id)
+	if err != nil {
+		internalServerError(rw, "cannot GetHobbies", err)
+		return
+	}
+
+	datas, err := json.Marshal(daoHobbies)
+	if err != nil {
+		internalServerError(rw, "cannot marshal Skill type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(datas)
+}
+
+func (s *ProfileService) GetSkills(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+
+	skills, err := s.manager.GetSkills(id)
+	if err != nil {
+		internalServerError(rw, "cannot GetSkills", err)
+		return
+	}
+
+	data, err := json.Marshal(skills)
+	if err != nil {
+		internalServerError(rw, "cannot marshal Skill type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(data)
+}
+
+func (s *ProfileService) GetFollowed(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+
+	followed, err := s.manager.GetFollowed(id)
+	if err != nil {
+		internalServerError(rw, "cannot GetFollowed", err)
+		return
+	}
+
+	data, err := json.Marshal(followed)
+	if err != nil {
+		internalServerError(rw, "cannot marshal Skill type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(data)
+}
+
+func (s *ProfileService) GetJobs(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+
+	jobs, err := s.manager.GetJobs(id)
+	if err != nil {
+		internalServerError(rw, "cannot GetJobs", err)
+		return
+	}
+
+	data, err := json.Marshal(jobs)
+	if err != nil {
+		internalServerError(rw, "cannot marshal Skill type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(data)
 }

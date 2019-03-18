@@ -14,16 +14,6 @@ import (
 	bolt "github.com/moutoum/golang-neo4j-bolt-driver"
 )
 
-type Profile struct {
-	Login     string
-	Password  string
-	Firstname string
-	Lastname  string
-	Birthday  string
-	Country   string
-	City      string
-}
-
 type ProfileManager struct {
 	pool bolt.DriverPool
 }
@@ -32,10 +22,10 @@ func NewProfileManager(pool bolt.DriverPool) *ProfileManager {
 	return &ProfileManager{pool}
 }
 
-func (m *ProfileManager) VerifyCreditentials(login, password string) (bool, error) {
+func (m *ProfileManager) VerifyCreditentials(login, password string) (int64, error) {
 	conn, err := m.pool.OpenPool()
 	if err != nil {
-		return false, err
+		return -1, err
 	}
 	defer conn.Close()
 
@@ -45,17 +35,26 @@ func (m *ProfileManager) VerifyCreditentials(login, password string) (bool, erro
 	})
 
 	if err != nil {
-		return false, err
+		return -1, err
 	}
 
 	defer rows.Close()
 
 	results, _, err := rows.All()
 	if err != nil {
-		return false, err
+		return -1, err
 	}
 
-	return len(results) == 1, nil
+	if len(results) != 1 {
+		return -1, nil
+	}
+
+	p, ok := results[0][0].(graph.Node)
+	if !ok {
+		return -1, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][0]))
+	}
+
+	return p.NodeIdentity, nil
 }
 
 func (m *ProfileManager) IsAccountExists(login string) (bool, error) {
@@ -83,7 +82,7 @@ func (m *ProfileManager) IsAccountExists(login string) (bool, error) {
 	return len(results) == 1, nil
 }
 
-func (b *ProfileManager) GetProfileWithID(id int) (*Profile, error) {
+func (b *ProfileManager) GetByID(id int64) (*Profile, error) {
 	conn, err := b.pool.OpenPool()
 	if err != nil {
 		return nil, err
@@ -97,67 +96,6 @@ func (b *ProfileManager) GetProfileWithID(id int) (*Profile, error) {
 		LIMIT 1`,
 		map[string]interface{}{
 			"id": id,
-		})
-
-	if err != nil {
-		return nil, fmt.Errorf("cannot query: %v", err)
-	}
-
-	defer r.Close()
-
-	results, _, err := r.All()
-
-	if err != nil {
-		return nil, err
-	}
-
-	if len(results) == 0 {
-		return nil, fmt.Errorf("profile with id = %d not found", id)
-	}
-
-	p, ok := results[0][0].(graph.Node)
-
-	if !ok {
-		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][0]))
-	}
-
-	ci, ok := results[0][1].(graph.Node)
-	if !ok {
-		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][0]))
-	}
-
-	co, ok := results[0][2].(graph.Node)
-	if !ok {
-		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][0]))
-	}
-
-	profile := &Profile{
-		Login:     p.Properties["login"].(string),
-		Password:  p.Properties["password"].(string),
-		Firstname: p.Properties["firstname"].(string),
-		Lastname:  p.Properties["lastname"].(string),
-		Birthday:  p.Properties["birthday"].(string),
-		Country:   co.Properties["name"].(string),
-		City:      ci.Properties["name"].(string),
-	}
-
-	return profile, nil
-}
-
-func (m *ProfileManager) GetByLogin(login string) (*Profile, error) {
-	conn, err := m.pool.OpenPool()
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Close()
-
-	r, err := conn.QueryNeo(`
-		MATCH (p:Profile)-[:Lives]->(ci:City)-[:Located]->(co:Country)
-		WHERE p.login = {login}
-		RETURN p, ci, co
-		LIMIT 1`,
-		map[string]interface{}{
-			"login": login,
 		})
 
 	if err != nil {
@@ -193,6 +131,9 @@ func (m *ProfileManager) GetByLogin(login string) (*Profile, error) {
 	}
 
 	profile := &Profile{
+		Entity: Entity{
+			ID: p.NodeIdentity,
+		},
 		Login:     p.Properties["login"].(string),
 		Password:  p.Properties["password"].(string),
 		Firstname: p.Properties["firstname"].(string),
@@ -250,6 +191,9 @@ func (b *ProfileManager) Search(pattern string) ([]*Profile, error) {
 		}
 
 		profiles = append(profiles, &Profile{
+			Entity: Entity{
+				ID: d.NodeIdentity,
+			},
 			Login:     d.Properties["login"].(string),
 			Password:  d.Properties["password"].(string),
 			Firstname: d.Properties["firstname"].(string),
@@ -294,4 +238,214 @@ func (m *ProfileManager) Create(p *Profile) error {
 	)
 
 	return err
+}
+
+func (m *ProfileManager) GetCompanies(profileID int) ([]*Company, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	r, err := conn.QueryNeo("MATCH (p:Profile)-[:Likes]->(c:Company) WHERE ID(p) = {profileID} RETURN c", map[string]interface{}{
+		"profileID": profileID,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer r.Close()
+
+	companies := []*Company{}
+
+	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
+		d, ok := data[0].(graph.Node)
+
+		if !ok {
+			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[0]))
+		}
+
+		companies = append(companies, &Company{
+			Entity: Entity{
+				ID: d.NodeIdentity,
+			},
+			Name:        d.Properties["name"].(string),
+			Siret:       d.Properties["siret"].(string),
+			Siren:       d.Properties["siren"].(string),
+			Description: d.Properties["description"].(string),
+		})
+	}
+
+	return companies, nil
+}
+
+func (m *ProfileManager) GetHobbies(profileID int) ([]*Hobby, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	r, err := conn.QueryNeo("MATCH (p:Profile)-[:Likes]->(s:Hobby) WHERE ID(p) = {profileID} RETURN s", map[string]interface{}{
+		"profileID": profileID,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer r.Close()
+
+	hobbies := []*Hobby{}
+
+	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
+		d, ok := data[0].(graph.Node)
+
+		if !ok {
+			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[0]))
+		}
+
+		hobbies = append(hobbies, &Hobby{
+			Entity: Entity{
+				ID: d.NodeIdentity,
+			},
+			Name: d.Properties["name"].(string),
+		})
+	}
+
+	return hobbies, nil
+}
+
+func (m *ProfileManager) GetSkills(profileID int) ([]*Skill, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	r, err := conn.QueryNeo("MATCH (p:Profile)-[:Uses]->(s:Skill) WHERE ID(p) = {profileID} RETURN s", map[string]interface{}{
+		"profileID": profileID,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer r.Close()
+
+	skills := []*Skill{}
+
+	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
+		d, ok := data[0].(graph.Node)
+
+		if !ok {
+			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[0]))
+		}
+
+		skills = append(skills, &Skill{
+			Entity: Entity{
+				ID: d.NodeIdentity,
+			},
+			Name: d.Properties["name"].(string),
+		})
+	}
+
+	return skills, nil
+}
+
+func (m *ProfileManager) GetFollowed(profileID int) ([]*Profile, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	r, err := conn.QueryNeo(`
+		MATCH (p:Profile)-[:Follow]->(f:Profile)-[:Lives]->(ci:City)-[:Located]->(co:Country)
+		WHERE ID(p) = {profileID}
+		RETURN f, ci, co`,
+		map[string]interface{}{
+			"profileID": profileID,
+		})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer r.Close()
+
+	profiles := []*Profile{}
+
+	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
+		d, ok := data[0].(graph.Node)
+
+		if !ok {
+			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[0]))
+		}
+
+		ci, ok := data[1].(graph.Node)
+		if !ok {
+			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[1]))
+		}
+
+		co, ok := data[2].(graph.Node)
+		if !ok {
+			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[2]))
+		}
+
+		profiles = append(profiles, &Profile{
+			Entity: Entity{
+				ID: d.NodeIdentity,
+			},
+			Login:     d.Properties["login"].(string),
+			Password:  d.Properties["password"].(string),
+			Firstname: d.Properties["firstname"].(string),
+			Lastname:  d.Properties["lastname"].(string),
+			Birthday:  d.Properties["birthday"].(string),
+			Country:   co.Properties["name"].(string),
+			City:      ci.Properties["name"].(string),
+		})
+	}
+
+	return profiles, nil
+}
+
+func (m *ProfileManager) GetJobs(profileID int) ([]*Job, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	r, err := conn.QueryNeo("MATCH (p:Profile)-[:Likes]->(j:Job) WHERE ID(p) = {profileID} RETURN j", map[string]interface{}{
+		"profileID": profileID,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer r.Close()
+
+	jobs := []*Job{}
+
+	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
+		d, ok := data[0].(graph.Node)
+
+		if !ok {
+			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[0]))
+		}
+
+		jobs = append(jobs, &Job{
+			Entity: Entity{
+				ID: d.NodeIdentity,
+			},
+			Name:        d.Properties["name"].(string),
+			GrossWage:   d.Properties["grossWage"].(string),
+			Description: d.Properties["description"].(string),
+		})
+	}
+
+	return jobs, nil
 }

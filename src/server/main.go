@@ -74,8 +74,12 @@ func run(ctx *cli.Context) error {
 	apiRouter.HandleFunc("/api/logout", connectionService.Logout).Methods("POST")
 
 	// profile
-	apiRouter.HandleFunc("/api/profile", profileService.GetCurrent).Methods("GET")
-	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}", profileService.GetByID).Methods("GET")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}", profileService.Get).Methods("GET")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/companies", profileService.GetCompanies).Methods("GET")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/hobbies", profileService.GetHobbies).Methods("GET")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/skills", profileService.GetSkills).Methods("GET")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/followed", profileService.GetFollowed).Methods("GET")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/jobs", profileService.GetJobs).Methods("GET")
 
 	router.PathPrefix("/api/").Handler(negroni.New(
 		negronilogrus.NewMiddleware(),

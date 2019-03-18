@@ -37,7 +37,26 @@ func NewConnectionService(profileManager *dao.ProfileManager) *ConnectionService
 }
 
 func (s *ConnectionService) Login(rw http.ResponseWriter, req *http.Request) {
-	rw.WriteHeader(http.StatusOK)
+	session := sessions.GetSession(req)
+	id := session.Get(internal.LoginKey).(int64)
+	profile, err := s.profileManager.GetByID(id)
+	if err != nil {
+		if err == dao.ErrNotFound {
+			http.NotFound(rw, req)
+			return
+		}
+		internalServerError(rw, "cannot GetByID", err)
+		return
+	}
+
+	datas, err := json.Marshal(profile)
+	if err != nil {
+		internalServerError(rw, "cannot marshal profile type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(datas)
 }
 
 func (s *ConnectionService) Logout(rw http.ResponseWriter, req *http.Request) {
