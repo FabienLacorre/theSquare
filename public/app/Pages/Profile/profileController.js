@@ -18,6 +18,12 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
   this.userId = localStorage.getItem("id");
   document.getElementById('test').style.display = "";
   this.hobbies = [];
+  this.companies = [];
+  this.skills = [];
+  this.friends = [];
+  this.jobs = [];
+
+
   this.me = undefined;
 
   $http.get('/api/profile/' + this.userId)
@@ -37,7 +43,11 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
       Promise.all(promises)
         .then((responses) => {
           responses = responses.map(elem => elem.data)
-          responses[1].forEach(elem => this.hobbies.push(elem))
+          // this.companies = responses[0];
+          this.hobbies = responses[1];
+          // this.skills = responses[2];
+          // this.friends = response[3];
+          // this.jobs = response[4];
           this.hobbies.forEach((elem) => {
             elem.photo = "../../img/test.jpg"
           })
@@ -63,7 +73,6 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
     this.changePasswordBool = false;
   }
 
-  this.friends = []
   for (let i = 0; i < 10; i++) {
     this.friends.push({
       name: "toto",
@@ -73,18 +82,24 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
       photo: "../../img/test.jpg"
     })
   }
-
-  /*   for (let i = 0; i < 10; i++) {
-      this.hobbies.push({
-        name: "hobbies test " + i,
-        photo: "../../img/test.jpg"
-      })
-    } */
-
-  this.companies = []
+  
   for (let i = 0; i < 10; i++) {
     this.companies.push({
       name: "Apple",
+      photo: "../../img/test.jpg",
+    })
+  }
+
+  for (let i = 0; i < 10; i++) {
+    this.skills.push({
+      name: "C++",
+      photo: "../../img/test.jpg",
+    })
+  }
+
+  for (let i = 0; i < 10; i++) {
+    this.jobs.push({
+      name: "C++",
       photo: "../../img/test.jpg",
     })
   }
