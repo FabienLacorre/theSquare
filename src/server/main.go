@@ -59,6 +59,7 @@ func run(ctx *cli.Context) error {
 	companyManager := dao.NewCompanyManager(driver)
 	hobbyManager := dao.NewHobbyManager(driver)
 	jobManager := dao.NewJobManager(driver)
+	skillManager := dao.NewSkillManager(driver)
 
 	connectionService := api.NewConnectionService(profileManager)
 
@@ -100,6 +101,10 @@ func run(ctx *cli.Context) error {
 	// jobs
 	jobService := api.NewJobService(jobManager)
 	apiRouter.HandleFunc("/api/job/{id:[0-9]+}", jobService.Get).Methods("GET")
+
+	// skills
+	skillService := api.NewSkillService(skillManager)
+	apiRouter.HandleFunc("/api/skill/{id:[0-9]+}", skillService.Get).Methods("GET")
 
 	router.PathPrefix("/api/").Handler(negroni.New(
 		negronilogrus.NewMiddleware(),
