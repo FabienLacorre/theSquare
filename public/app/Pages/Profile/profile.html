@@ -170,7 +170,7 @@
                     <h2 style="color:white">companies</h2>
                     <div>
                         <div class="subBox" ng-repeat="companie in $ctrl.companies track by $index"
-                            ng-click="$ctrl.moveToDetails('companie')">
+                            ng-click="$ctrl.moveToDetails('companie', companie.id)">
                             <div class="photo">
                                 <img ng-src="{{companie.photo}}">
                             </div>
@@ -197,7 +197,7 @@
                     <h2 style="color:white">Friends</h2>
                     <div>
                         <div class="subBox" ng-repeat="friend in $ctrl.friends track by $index"
-                            ng-click="$ctrl.moveToDetails('friend')">
+                            ng-click="$ctrl.moveToDetails('friend', friend.id)">
                             <div class="photo">
                                 <img ng-src="{{friend.photo}}">
                             </div>
@@ -227,13 +227,13 @@
                 <div class="jobsDiv">
                     <h2 style="color:white">Jobs</h2>
                     <div>
-                        <div class="subBox" ng-repeat="friend in $ctrl.friends track by $index"
-                            ng-click="$ctrl.moveToDetails('friend')">
+                        <div class="subBox" ng-repeat="job in $ctrl.jobs track by $index"
+                            ng-click="$ctrl.moveToDetails('job', job.id)">
                             <div class="photo">
-                                <img ng-src="{{friend.photo}}">
+                                <img ng-src="{{job.photo}}">
                             </div>
                             <div class="info">
-                                <span>{{friend.name}}</span>
+                                <span>{{job.name}}</span>
                                 <div class="float-right">
                                     <button style="margin-bottom: 5px;" class="btn btn-primary"
                                         ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
@@ -243,12 +243,6 @@
                                         ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
                                             class="fa fa-thumbs-down"></span></button>
                                 </div>
-                                <span>{{friend.surname}}</span>
-                                <br>
-                                <span>{{friend.age}}</span>
-                                <br>
-                                <span>{{friend.city}}</span>
-
                             </div>
                         </div>
                     </div>
@@ -263,7 +257,7 @@
                     <h2 style="color:white">Hobbies</h2>
                     <div>
                         <div class="subBox" ng-repeat="hobbie in $ctrl.hobbies track by $index"
-                            ng-click="$ctrl.moveToDetails('hobbie')">
+                            ng-click="$ctrl.moveToDetails('hobbie', hobbie.id)">
                             <div class="photo">
                                 <img ng-src="{{hobbie.photo}}">
                             </div>
@@ -289,7 +283,7 @@
                     <h2 style="color:white">Skills</h2>
                     <div>
                         <div class="subBox" ng-repeat="skill in $ctrl.skills track by $index"
-                            ng-click="$ctrl.moveToDetails('skill')">
+                            ng-click="$ctrl.moveToDetails('skill', skill.id)">
                             <div class="photo">
                                 <img ng-src="{{skill.photo}}">
                             </div>

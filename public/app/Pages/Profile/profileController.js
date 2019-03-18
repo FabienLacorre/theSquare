@@ -99,7 +99,7 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
 
   for (let i = 0; i < 10; i++) {
     this.jobs.push({
-      name: "C++",
+      name: "Developper",
       photo: "../../img/test.jpg",
     })
   }
@@ -107,9 +107,9 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
   /**
    * @brief change location page for detail page
    */
-  this.moveToDetails = (type) => {
+  this.moveToDetails = (type, id) => {
     console.log("move to details")
-    $location.path('/Details/' + type)
+    $location.path('/Details/' + type + "/" + id)
   }
 
   /**
