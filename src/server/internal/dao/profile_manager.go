@@ -90,9 +90,9 @@ func (b *ProfileManager) GetByID(id int64) (*Profile, error) {
 	defer conn.Close()
 
 	r, err := conn.QueryNeo(`
-		MATCH (p:Profile)-[:Lives]->(ci:City)-[:Located]->(co:Country)
+		MATCH (e:Education)<-[:Studies]-(p:Profile)-[:Lives]->(ci:City)-[:Located]->(co:Country)
 		WHERE ID(p) = {id}
-		RETURN p, ci, co
+		RETURN p, ci, co, e
 		LIMIT 1`,
 		map[string]interface{}{
 			"id": id,
@@ -122,25 +122,31 @@ func (b *ProfileManager) GetByID(id int64) (*Profile, error) {
 
 	ci, ok := results[0][1].(graph.Node)
 	if !ok {
-		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][0]))
+		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][1]))
 	}
 
 	co, ok := results[0][2].(graph.Node)
 	if !ok {
-		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][0]))
+		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][2]))
+	}
+
+	e, ok := results[0][3].(graph.Node)
+	if !ok {
+		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][3]))
 	}
 
 	profile := &Profile{
 		Entity: Entity{
 			ID: p.NodeIdentity,
 		},
-		Login:     p.Properties["login"].(string),
-		Password:  p.Properties["password"].(string),
-		Firstname: p.Properties["firstname"].(string),
-		Lastname:  p.Properties["lastname"].(string),
-		Birthday:  p.Properties["birthday"].(string),
-		Country:   co.Properties["name"].(string),
-		City:      ci.Properties["name"].(string),
+		Login:          p.Properties["login"].(string),
+		Password:       p.Properties["password"].(string),
+		Firstname:      p.Properties["firstname"].(string),
+		Lastname:       p.Properties["lastname"].(string),
+		Birthday:       p.Properties["birthday"].(string),
+		Country:        co.Properties["name"].(string),
+		City:           ci.Properties["name"].(string),
+		EducationLevel: e.Properties["level"].(int64),
 	}
 
 	return profile, nil
@@ -154,12 +160,12 @@ func (b *ProfileManager) Search(pattern string) ([]*Profile, error) {
 	defer conn.Close()
 
 	r, err := conn.QueryNeo(`
-		MATCH (p:Profile)-[:Lives]->(ci:City)-[:Located]->(co:Country) 
+		MATCH (e:Education)<-[:Studies]-(p:Profile)-[:Lives]->(ci:City)-[:Located]->(co:Country) 
 		WHERE 
 			p.firstname CONTAINS {pattern} OR
 			p.lastname CONTAINS {pattern} OR
 			p.login CONTAINS {pattern}
-		RETURN p, ci, co`,
+		RETURN p, ci, co, e`,
 		map[string]interface{}{
 			"pattern": pattern,
 		},
@@ -190,17 +196,23 @@ func (b *ProfileManager) Search(pattern string) ([]*Profile, error) {
 			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[2]))
 		}
 
+		e, ok := data[3].(graph.Node)
+		if !ok {
+			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[3]))
+		}
+
 		profiles = append(profiles, &Profile{
 			Entity: Entity{
 				ID: d.NodeIdentity,
 			},
-			Login:     d.Properties["login"].(string),
-			Password:  d.Properties["password"].(string),
-			Firstname: d.Properties["firstname"].(string),
-			Lastname:  d.Properties["lastname"].(string),
-			Birthday:  d.Properties["birthday"].(string),
-			Country:   co.Properties["name"].(string),
-			City:      ci.Properties["name"].(string),
+			Login:          d.Properties["login"].(string),
+			Password:       d.Properties["password"].(string),
+			Firstname:      d.Properties["firstname"].(string),
+			Lastname:       d.Properties["lastname"].(string),
+			Birthday:       d.Properties["birthday"].(string),
+			Country:        co.Properties["name"].(string),
+			City:           ci.Properties["name"].(string),
+			EducationLevel: e.Properties["level"].(int64),
 		})
 	}
 
@@ -217,6 +229,7 @@ func (m *ProfileManager) Create(p *Profile) error {
 	_, err = conn.ExecNeo(`
 		MERGE (co:Country{ name: {country_name} })
 		MERGE (ci:City{ name: {city_name} })
+		MERGE (e:Education{ level: {education_level} })
 		CREATE (p:Profile{
 				login: {login},
 				password: {password},
@@ -227,13 +240,14 @@ func (m *ProfileManager) Create(p *Profile) error {
 		CREATE (ci)-[:Located]->(co)
 		CREATE (p)-[:Lives]->(ci)`,
 		map[string]interface{}{
-			"country_name": strings.Title(p.Country),
-			"city_name":    strings.Title(p.City),
-			"login":        p.Login,
-			"password":     p.Password,
-			"fname":        strings.Title(p.Firstname),
-			"lname":        strings.Title(p.Lastname),
-			"birthday":     p.Birthday,
+			"country_name":    strings.Title(p.Country),
+			"city_name":       strings.Title(p.City),
+			"login":           p.Login,
+			"password":        p.Password,
+			"fname":           strings.Title(p.Firstname),
+			"lname":           strings.Title(p.Lastname),
+			"birthday":        p.Birthday,
+			"education_level": p.EducationLevel,
 		},
 	)
 
@@ -431,9 +445,11 @@ func (m *ProfileManager) GetFollowed(profileID int) ([]*Profile, error) {
 	defer conn.Close()
 
 	r, err := conn.QueryNeo(`
-		MATCH (p:Profile)-[:Follow]->(f:Profile)-[:Lives]->(ci:City)-[:Located]->(co:Country)
+		MATCH
+			(p:Profile)-[:Follow]->(f:Profile)-[:Lives]->(ci:City)-[:Located]->(co:Country),
+			(f:Profile)-[:Studies]->(e:Education)
 		WHERE ID(p) = {profileID}
-		RETURN f, ci, co`,
+		RETURN f, ci, co, e`,
 		map[string]interface{}{
 			"profileID": profileID,
 		})
@@ -463,17 +479,23 @@ func (m *ProfileManager) GetFollowed(profileID int) ([]*Profile, error) {
 			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[2]))
 		}
 
+		e, ok := data[3].(graph.Node)
+		if !ok {
+			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[3]))
+		}
+
 		profiles = append(profiles, &Profile{
 			Entity: Entity{
 				ID: d.NodeIdentity,
 			},
-			Login:     d.Properties["login"].(string),
-			Password:  d.Properties["password"].(string),
-			Firstname: d.Properties["firstname"].(string),
-			Lastname:  d.Properties["lastname"].(string),
-			Birthday:  d.Properties["birthday"].(string),
-			Country:   co.Properties["name"].(string),
-			City:      ci.Properties["name"].(string),
+			Login:          d.Properties["login"].(string),
+			Password:       d.Properties["password"].(string),
+			Firstname:      d.Properties["firstname"].(string),
+			Lastname:       d.Properties["lastname"].(string),
+			Birthday:       d.Properties["birthday"].(string),
+			Country:        co.Properties["name"].(string),
+			City:           ci.Properties["name"].(string),
+			EducationLevel: e.Properties["level"].(int64),
 		})
 	}
 

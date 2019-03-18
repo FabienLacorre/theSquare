@@ -25,13 +25,14 @@ type Job struct {
 
 type Profile struct {
 	Entity
-	Login     string `json:"login"`
-	Password  string `json:"-"`
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-	Birthday  string `json:"birthday"`
-	Country   string `json:"country"`
-	City      string `json:"city"`
+	Login          string `json:"login"`
+	Password       string `json:"-"`
+	Firstname      string `json:"firstname"`
+	Lastname       string `json:"lastname"`
+	Birthday       string `json:"birthday"`
+	Country        string `json:"country"`
+	City           string `json:"city"`
+	EducationLevel int64  `json:"education"`
 }
 
 type Skill struct {
