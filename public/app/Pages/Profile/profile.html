@@ -120,10 +120,12 @@
                             </div>
                         </div>
                         <div class="col-md-5" style=" position: relative;">
-                            <span>{{$ctrl.me.name}}</span>
-                            <span>{{$ctrl.me.surname}}</span>
+                            <span>{{$ctrl.me.firstname}}</span>
+                            <span>{{$ctrl.me.lastname}}</span>
                             <br>
-                            <span>{{$ctrl.me.age}}</span>
+                            <span>{{$ctrl.me.birthday}}</span>
+                            <br>
+                            <span>{{$ctrl.me.country}}</span>
                             <br>
                             <span>{{$ctrl.me.city}}</span>
                             <br>
@@ -132,7 +134,8 @@
                                     password</button>
                                 <div ng-if="$ctrl.changePasswordBool === true">
                                     <input type="text" class="inputPasswordProfile" placeholder="New password">
-                                    <button style="width: 100%" class="btn btn-primary" ng-click="$ctrl.validateChangePassword()">Valider</button>
+                                    <button style="width: 100%" class="btn btn-primary"
+                                        ng-click="$ctrl.validateChangePassword()">Valider</button>
                                 </div>
                             </div>
                         </div>

@@ -13,9 +13,42 @@ Profile.config(['$routeProvider', function ($routeProvider) {
 /**
  * @brief Profile controller
  */
-Profile.controller('ProfileController', function ($location) {
+Profile.controller('ProfileController', function ($location, $http, $scope) {
   console.log("hello dashboar controller")
+  this.userId = localStorage.getItem("id");
   document.getElementById('test').style.display = "";
+  this.hobbies = [];
+  this.me = undefined;
+
+  $http.get('/api/profile/' + this.userId)
+    .then((response) => response.data)
+    .then((response) => {
+      console.log(response);
+      this.me = response
+
+      const promises = []
+
+      promises.push($http.get('/api/profile/' + this.userId + "/companies"))
+      promises.push($http.get('/api/profile/' + this.userId + "/hobbies"))
+      promises.push($http.get('/api/profile/' + this.userId + "/skills"))
+      promises.push($http.get('/api/profile/' + this.userId + "/followed"))
+      promises.push($http.get('/api/profile/' + this.userId + "/jobs"))
+
+      Promise.all(promises)
+        .then((responses) => {
+          responses = responses.map(elem => elem.data)
+          responses[1].forEach(elem => this.hobbies.push(elem))
+          this.hobbies.forEach((elem) => {
+            elem.photo = "../../img/test.jpg"
+          })
+          if (!$scope.$$phase) {
+            $scope.$apply();
+          }
+          console.log(this.hobbies)
+        }).catch((err) => alert("ERROR" + err))
+    })
+
+
 
   this.changePasswordBool = false;
 
@@ -27,16 +60,7 @@ Profile.controller('ProfileController', function ($location) {
    * @brief validation changement mot de passe handler button
    */
   this.validateChangePassword = () => {
-    console.log("MODIFICATION PASSWORD CLICK")
     this.changePasswordBool = false;
-  }
-
-  this.me = {
-    name: "LACORRE",
-    surname: "Fabien",
-    age: 25,
-    city: "Rennes",
-    friends: [],
   }
 
   this.friends = []
@@ -50,13 +74,12 @@ Profile.controller('ProfileController', function ($location) {
     })
   }
 
-  this.hobbies = []
-  for (let i = 0; i < 10; i++) {
-    this.hobbies.push({
-      name: "hobbies test " + i,
-      photo: "../../img/test.jpg"
-    })
-  }
+  /*   for (let i = 0; i < 10; i++) {
+      this.hobbies.push({
+        name: "hobbies test " + i,
+        photo: "../../img/test.jpg"
+      })
+    } */
 
   this.companies = []
   for (let i = 0; i < 10; i++) {
