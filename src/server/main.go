@@ -76,10 +76,15 @@ func run(ctx *cli.Context) error {
 	// profile
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}", profileService.Get).Methods("GET")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/companies", profileService.GetCompanies).Methods("GET")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/companies/{company_id:[0-9]+}", profileService.PostCompany).Methods("POST")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/hobbies", profileService.GetHobbies).Methods("GET")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/hobbies/{hobby_id:[0-9]+}", profileService.PostHobby).Methods("POST")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/skills", profileService.GetSkills).Methods("GET")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/skills/{skill_id:[0-9]+}", profileService.PostSkill).Methods("POST")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/followed", profileService.GetFollowed).Methods("GET")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/follow/{profile_id:[0-9]+}", profileService.Follow).Methods("POST")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/jobs", profileService.GetJobs).Methods("GET")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/jobs/{job_id:[0-9]+}", profileService.PostJob).Methods("POST")
 
 	router.PathPrefix("/api/").Handler(negroni.New(
 		negronilogrus.NewMiddleware(),
