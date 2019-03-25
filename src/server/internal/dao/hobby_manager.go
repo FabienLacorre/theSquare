@@ -6,6 +6,7 @@ package dao
 
 import (
 	"fmt"
+	"io"
 	"reflect"
 
 	"github.com/johnnadratowski/golang-neo4j-bolt-driver/structures/graph"
@@ -66,4 +67,49 @@ func (m *HobbyManager) GetByID(id int64) (*Hobby, error) {
 	}
 
 	return hobby, nil
+}
+
+func (m *HobbyManager) Search(pattern string) ([]*Hobby, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	r, err := conn.QueryNeo(`
+		MATCH (h:Hobby)
+		WHERE h.name CONTAINS {pattern}
+		RETURN h`,
+		map[string]interface{}{
+			"pattern": pattern,
+		})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer r.Close()
+
+	hobbies := []*Hobby{}
+
+	if err != nil {
+		return nil, err
+	}
+
+	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
+		d, ok := data[0].(graph.Node)
+
+		if !ok {
+			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[0]))
+		}
+
+		hobbies = append(hobbies, &Hobby{
+			Entity: Entity{
+				ID: d.NodeIdentity,
+			},
+			Name: d.Properties["name"].(string),
+		})
+	}
+
+	return hobbies, nil
 }

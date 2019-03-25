@@ -105,6 +105,7 @@ func run(ctx *cli.Context) error {
 	// hobbies
 	hobbyService := api.NewHobbyService(hobbyManager)
 	apiRouter.HandleFunc("/api/hobby/{id:[0-9]+}", hobbyService.Get).Methods("GET")
+	apiRouter.HandleFunc("/api/hobby/search/{pattern}", hobbyService.Search).Methods("GET")
 
 	// jobs
 	jobService := api.NewJobService(jobManager)
