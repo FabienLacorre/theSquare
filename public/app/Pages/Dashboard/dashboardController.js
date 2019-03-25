@@ -71,8 +71,8 @@ Dashboard.controller('DashboardController', function ($location) {
   /**
    * @brief change location page for detail page
    */
-  this.moveToDetails = (type) => {
-    console.log("move to details")
-    $location.path('/Details/' + type)
+  this.moveToDetails = (type, id) => {
+    console.log("move to details " + type)
+    $location.path('/Details/' + type + "/" + id)
   }
 });

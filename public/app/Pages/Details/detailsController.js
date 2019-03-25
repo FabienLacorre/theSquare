@@ -52,6 +52,7 @@ Details.controller('DetailsController', function ($routeParams, $location, $http
 // }
 
 this.changeLocation = (route) => {
+  console.log("change location")
   $location.path('/' + route)
 }
 

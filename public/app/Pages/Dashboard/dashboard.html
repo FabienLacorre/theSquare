@@ -87,7 +87,7 @@
                     </div>
                 </div>
             </div>
-            <div class="subDivDashboard" ng-repeat="object in $ctrl.dashboardObjects track by $index" ng-click="$ctrl.moveToDetails(object.type)">
+            <div class="subDivDashboard" ng-repeat="object in $ctrl.dashboardObjects track by $index" ng-click="$ctrl.moveToDetails(object.type, object.id)">
                 <div class="photoDashboard">
                     <img ng-src="{{object.photo}}" style="" alt="">
                 </div>
