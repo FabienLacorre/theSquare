@@ -261,9 +261,13 @@ func (m *ProfileManager) GetCompanies(profileID int) ([]*Company, error) {
 	}
 	defer conn.Close()
 
-	r, err := conn.QueryNeo("MATCH (p:Profile)-[:Likes]->(c:Company) WHERE ID(p) = {profileID} RETURN c", map[string]interface{}{
-		"profileID": profileID,
-	})
+	r, err := conn.QueryNeo(`
+		MATCH (p:Profile)-[:Likes]->(c:Company)-[:Attached]->(d:Domain)
+		WHERE ID(p) = {profileID}
+		RETURN c, d.name`,
+		map[string]interface{}{
+			"profileID": profileID,
+		})
 
 	if err != nil {
 		return nil, fmt.Errorf("cannot query: %v", err)
@@ -271,27 +275,28 @@ func (m *ProfileManager) GetCompanies(profileID int) ([]*Company, error) {
 
 	defer r.Close()
 
-	companies := []*Company{}
-
+	companies := make(map[int64]*Company)
 	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
-		d, ok := data[0].(graph.Node)
+		c, _ := data[0].(graph.Node)
+		d, _ := data[1].(string)
 
-		if !ok {
-			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[0]))
+		if _, ok := companies[c.NodeIdentity]; !ok {
+			companies[c.NodeIdentity] = &Company{}
+			companies[c.NodeIdentity].Entity.ID = c.NodeIdentity
+			companies[c.NodeIdentity].Name = c.Properties["name"].(string)
+			companies[c.NodeIdentity].Siret = c.Properties["siret"].(string)
+			companies[c.NodeIdentity].Siren = c.Properties["siren"].(string)
+			companies[c.NodeIdentity].Description = c.Properties["description"].(string)
 		}
-
-		companies = append(companies, &Company{
-			Entity: Entity{
-				ID: d.NodeIdentity,
-			},
-			Name:        d.Properties["name"].(string),
-			Siret:       d.Properties["siret"].(string),
-			Siren:       d.Properties["siren"].(string),
-			Description: d.Properties["description"].(string),
-		})
+		companies[c.NodeIdentity].Domains = append(companies[c.NodeIdentity].Domains, d)
 	}
 
-	return companies, nil
+	companiesOutput := make([]*Company, 0, len(companies))
+	for _, company := range companies {
+		companiesOutput = append(companiesOutput, company)
+	}
+
+	return companiesOutput, nil
 }
 
 func (m *ProfileManager) PostCompany(profileID, companyID int) error {

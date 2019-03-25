@@ -10,10 +10,11 @@ type Entity struct {
 
 type Company struct {
 	Entity
-	Name        string `json:"name"`
-	Siret       string `json:"siret"`
-	Siren       string `json:"siren"`
-	Description string `json:"description"`
+	Name        string   `json:"name"`
+	Siret       string   `json:"siret"`
+	Siren       string   `json:"siren"`
+	Description string   `json:"description"`
+	Domains     []string `json:"domains"`
 }
 
 type Job struct {
