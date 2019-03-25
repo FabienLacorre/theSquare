@@ -89,6 +89,7 @@ func run(ctx *cli.Context) error {
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/follow/{profile_id:[0-9]+}", profileService.Follow).Methods("POST")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/jobs", profileService.GetJobs).Methods("GET")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/jobs/{job_id:[0-9]+}", profileService.PostJob).Methods("POST")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/propositions/users", profileService.GetPropositionsUsers).Methods("GET")
 
 	// companies
 	companyService := api.NewCompanyService(companyManager)

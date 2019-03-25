@@ -114,42 +114,7 @@ func (b *ProfileManager) GetByID(id int64) (*Profile, error) {
 		return nil, ErrNotFound
 	}
 
-	p, ok := results[0][0].(graph.Node)
-
-	if !ok {
-		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][0]))
-	}
-
-	ci, ok := results[0][1].(graph.Node)
-	if !ok {
-		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][1]))
-	}
-
-	co, ok := results[0][2].(graph.Node)
-	if !ok {
-		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][2]))
-	}
-
-	e, ok := results[0][3].(graph.Node)
-	if !ok {
-		return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(results[0][3]))
-	}
-
-	profile := &Profile{
-		Entity: Entity{
-			ID: p.NodeIdentity,
-		},
-		Login:          p.Properties["login"].(string),
-		Password:       p.Properties["password"].(string),
-		Firstname:      p.Properties["firstname"].(string),
-		Lastname:       p.Properties["lastname"].(string),
-		Birthday:       p.Properties["birthday"].(string),
-		Country:        co.Properties["name"].(string),
-		City:           ci.Properties["name"].(string),
-		EducationLevel: e.Properties["level"].(int64),
-	}
-
-	return profile, nil
+	return rowToProfile(results[0]), nil
 }
 
 func (b *ProfileManager) Search(pattern string) ([]*Profile, error) {
@@ -180,40 +145,7 @@ func (b *ProfileManager) Search(pattern string) ([]*Profile, error) {
 	var profiles []*Profile
 
 	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
-		d, ok := data[0].(graph.Node)
-
-		if !ok {
-			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[0]))
-		}
-
-		ci, ok := data[1].(graph.Node)
-		if !ok {
-			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[1]))
-		}
-
-		co, ok := data[2].(graph.Node)
-		if !ok {
-			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[2]))
-		}
-
-		e, ok := data[3].(graph.Node)
-		if !ok {
-			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[3]))
-		}
-
-		profiles = append(profiles, &Profile{
-			Entity: Entity{
-				ID: d.NodeIdentity,
-			},
-			Login:          d.Properties["login"].(string),
-			Password:       d.Properties["password"].(string),
-			Firstname:      d.Properties["firstname"].(string),
-			Lastname:       d.Properties["lastname"].(string),
-			Birthday:       d.Properties["birthday"].(string),
-			Country:        co.Properties["name"].(string),
-			City:           ci.Properties["name"].(string),
-			EducationLevel: e.Properties["level"].(int64),
-		})
+		profiles = append(profiles, rowToProfile(data))
 	}
 
 	return profiles, nil
@@ -468,40 +400,7 @@ func (m *ProfileManager) GetFollowed(profileID int) ([]*Profile, error) {
 	profiles := []*Profile{}
 
 	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
-		d, ok := data[0].(graph.Node)
-
-		if !ok {
-			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[0]))
-		}
-
-		ci, ok := data[1].(graph.Node)
-		if !ok {
-			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[1]))
-		}
-
-		co, ok := data[2].(graph.Node)
-		if !ok {
-			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[2]))
-		}
-
-		e, ok := data[3].(graph.Node)
-		if !ok {
-			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[3]))
-		}
-
-		profiles = append(profiles, &Profile{
-			Entity: Entity{
-				ID: d.NodeIdentity,
-			},
-			Login:          d.Properties["login"].(string),
-			Password:       d.Properties["password"].(string),
-			Firstname:      d.Properties["firstname"].(string),
-			Lastname:       d.Properties["lastname"].(string),
-			Birthday:       d.Properties["birthday"].(string),
-			Country:        co.Properties["name"].(string),
-			City:           ci.Properties["name"].(string),
-			EducationLevel: e.Properties["level"].(int64),
-		})
+		profiles = append(profiles, rowToProfile(data))
 	}
 
 	return profiles, nil
@@ -590,4 +489,56 @@ func (m *ProfileManager) PostJob(profileID, jobID int) error {
 	}
 
 	return nil
+}
+
+func (m *ProfileManager) GetPropositionsUsers(profileID int) ([]*Profile, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	results, err := conn.QueryNeo(`
+		MATCH (me:Profile) WHERE ID(me) = {profileID} WITH me
+		MATCH (e:Education)<-[:Studies]-(p:Profile)-[:Lives]->(ci:City)-[:Located]->(co:Country)
+		WHERE NOT (me)-[:Follow]->(p) AND p <> me
+		WITH me, p, ci, co, e
+		MATCH (n)
+		WHERE ((me)-->(n) AND (p)-->(n))
+		RETURN DISTINCT p, ci, co, e`,
+		map[string]interface{}{
+			"profileID": profileID,
+		})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+
+	var profiles []*Profile
+	for row, _, err := results.NextNeo(); err != io.EOF; row, _, err = results.NextNeo() {
+		profiles = append(profiles, rowToProfile(row))
+	}
+
+	return profiles, nil
+}
+
+func rowToProfile(row []interface{}) *Profile {
+	p, _ := row[0].(graph.Node)
+	ci, _ := row[1].(graph.Node)
+	co, _ := row[2].(graph.Node)
+	e, _ := row[3].(graph.Node)
+
+	return &Profile{
+		Entity: Entity{
+			ID: p.NodeIdentity,
+		},
+		Login:          p.Properties["login"].(string),
+		Password:       p.Properties["password"].(string),
+		Firstname:      p.Properties["firstname"].(string),
+		Lastname:       p.Properties["lastname"].(string),
+		Birthday:       p.Properties["birthday"].(string),
+		Country:        co.Properties["name"].(string),
+		City:           ci.Properties["name"].(string),
+		EducationLevel: e.Properties["level"].(int64),
+	}
 }

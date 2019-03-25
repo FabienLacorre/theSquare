@@ -209,3 +209,23 @@ func (s *ProfileService) PostJob(rw http.ResponseWriter, req *http.Request) {
 
 	rw.WriteHeader(http.StatusOK)
 }
+
+func (s *ProfileService) GetPropositionsUsers(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	profileID, _ := strconv.Atoi(vars["id"])
+
+	profiles, err := s.manager.GetPropositionsUsers(profileID)
+	if err != nil {
+		internalServerError(rw, "cannot GetPropositionsUsers", err)
+		return
+	}
+
+	data, err := json.Marshal(profiles)
+	if err != nil {
+		internalServerError(rw, "cannot marshal Profile type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(data)
+}
