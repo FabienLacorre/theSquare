@@ -6,7 +6,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"server/internal/dao"
 	"strconv"

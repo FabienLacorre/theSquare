@@ -44,3 +44,23 @@ func (s *JobService) Get(rw http.ResponseWriter, req *http.Request) {
 	rw.Header().Set("Content-type", "application/json")
 	rw.Write(datas)
 }
+
+func (s *JobService) Search(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	pattern := vars["pattern"]
+
+	jobs, err := s.manager.Search(pattern)
+	if err != nil {
+		internalServerError(rw, "cannot Search Jobs", err)
+		return
+	}
+
+	datas, err := json.Marshal(jobs)
+	if err != nil {
+		internalServerError(rw, "cannot marshal job type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(datas)
+}

@@ -109,6 +109,7 @@ func run(ctx *cli.Context) error {
 	// jobs
 	jobService := api.NewJobService(jobManager)
 	apiRouter.HandleFunc("/api/job/{id:[0-9]+}", jobService.Get).Methods("GET")
+	apiRouter.HandleFunc("/api/job/search/{pattern}", jobService.Search).Methods("GET")
 
 	// skills
 	skillService := api.NewSkillService(skillManager)

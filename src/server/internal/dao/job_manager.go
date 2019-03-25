@@ -2,6 +2,7 @@ package dao
 
 import (
 	"fmt"
+	"io"
 	"reflect"
 
 	"github.com/johnnadratowski/golang-neo4j-bolt-driver/structures/graph"
@@ -64,6 +65,55 @@ func (m *JobManager) GetByID(id int64) (*Job, error) {
 	}
 
 	return job, nil
+}
+
+func (m *JobManager) Search(pattern string) ([]*Job, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	r, err := conn.QueryNeo(`
+		MATCH (j:Job)
+		WHERE
+			j.name CONTAINS {pattern} OR
+			j.description CONTAINS {pattern}
+		RETURN j`,
+		map[string]interface{}{
+			"pattern": pattern,
+		})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer r.Close()
+
+	jobs := []*Job{}
+
+	if err != nil {
+		return nil, err
+	}
+
+	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
+		d, ok := data[0].(graph.Node)
+
+		if !ok {
+			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[0]))
+		}
+
+		jobs = append(jobs, &Job{
+			Entity: Entity{
+				ID: d.NodeIdentity,
+			},
+			Name:        d.Properties["name"].(string),
+			GrossWage:   d.Properties["grossWage"].(string),
+			Description: d.Properties["description"].(string),
+		})
+	}
+
+	return jobs, nil
 }
 
 // func (b *DataManager) GetJobWithName(pattern string) error {
