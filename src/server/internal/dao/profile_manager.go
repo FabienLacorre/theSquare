@@ -513,6 +513,7 @@ func (m *ProfileManager) GetPropositionsUsers(profileID int) ([]*Profile, error)
 	if err != nil {
 		return nil, fmt.Errorf("cannot query: %v", err)
 	}
+	defer results.Close()
 
 	var profiles []*Profile
 	for row, _, err := results.NextNeo(); err != io.EOF; row, _, err = results.NextNeo() {
@@ -520,6 +521,50 @@ func (m *ProfileManager) GetPropositionsUsers(profileID int) ([]*Profile, error)
 	}
 
 	return profiles, nil
+}
+
+func (m *ProfileManager) GetPropositionsCompanies(profileID int) ([]*Company, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	results, err := conn.QueryNeo(`
+		MATCH (me:Profile) WHERE ID(me) = {profileID} WITH me
+		MATCH (d:Domain)<-[:Attached]-(c:Company)-[:Offers]->(j:Job)-[:Requires]->(s:Skill) WHERE NOT (me)-[:Likes]->(c) AND ((me)-[:Uses]->(s))
+		RETURN DISTINCT c, d.name`,
+		map[string]interface{}{
+			"profileID": profileID,
+		})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+	defer results.Close()
+
+	companies := make(map[int64]*Company)
+	for data, _, err := results.NextNeo(); err != io.EOF; data, _, err = results.NextNeo() {
+		c, _ := data[0].(graph.Node)
+		d, _ := data[1].(string)
+
+		if _, ok := companies[c.NodeIdentity]; !ok {
+			companies[c.NodeIdentity] = &Company{}
+			companies[c.NodeIdentity].Entity.ID = c.NodeIdentity
+			companies[c.NodeIdentity].Name = c.Properties["name"].(string)
+			companies[c.NodeIdentity].Siret = c.Properties["siret"].(string)
+			companies[c.NodeIdentity].Siren = c.Properties["siren"].(string)
+			companies[c.NodeIdentity].Description = c.Properties["description"].(string)
+		}
+		companies[c.NodeIdentity].Domains = append(companies[c.NodeIdentity].Domains, d)
+	}
+
+	companiesOutput := make([]*Company, 0, len(companies))
+	for _, company := range companies {
+		companiesOutput = append(companiesOutput, company)
+	}
+
+	return companiesOutput, nil
 }
 
 func rowToProfile(row []interface{}) *Profile {

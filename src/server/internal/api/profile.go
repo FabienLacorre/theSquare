@@ -229,3 +229,23 @@ func (s *ProfileService) GetPropositionsUsers(rw http.ResponseWriter, req *http.
 	rw.Header().Set("Content-type", "application/json")
 	rw.Write(data)
 }
+
+func (s *ProfileService) GetPropositionsCompanies(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	profileID, _ := strconv.Atoi(vars["id"])
+
+	companies, err := s.manager.GetPropositionsCompanies(profileID)
+	if err != nil {
+		internalServerError(rw, "cannot GetPropositionsCompanies", err)
+		return
+	}
+
+	data, err := json.Marshal(companies)
+	if err != nil {
+		internalServerError(rw, "cannot marshal Company type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(data)
+}
