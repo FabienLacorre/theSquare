@@ -43,22 +43,32 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
       Promise.all(promises)
         .then((responses) => {
           responses = responses.map(elem => elem.data)
-          // this.companies = responses[0];
+          console.log(responses)
+          this.companies = responses[0];
+          this.companies.forEach((elem) => {
+            elem.photo = "../../img/test.jpg"
+          })
           this.hobbies = responses[1];
-          // this.skills = responses[2];
-          // this.friends = response[3];
-          // this.jobs = response[4];
+          this.hobbies.forEach((elem) => {
+            elem.photo = "../../img/test.jpg"
+          })
+          this.skills = responses[2];
+          this.skills.forEach((elem) => {
+            elem.photo = "../../img/test.jpg"
+          })
+          this.friends = responses[3];
+          this.friends.forEach((elem) => {
+            elem.photo = "../../img/test.jpg"
+          })
+          this.jobs = responses[4];
           this.hobbies.forEach((elem) => {
             elem.photo = "../../img/test.jpg"
           })
           if (!$scope.$$phase) {
             $scope.$apply();
           }
-          console.log(this.hobbies)
         }).catch((err) => alert("ERROR" + err))
     })
-
-
 
   this.changePasswordBool = false;
 
@@ -71,37 +81,6 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
    */
   this.validateChangePassword = () => {
     this.changePasswordBool = false;
-  }
-
-  for (let i = 0; i < 10; i++) {
-    this.friends.push({
-      name: "toto",
-      surname: "titi " + i,
-      age: "100",
-      city: "Paris",
-      photo: "../../img/test.jpg"
-    })
-  }
-  
-  for (let i = 0; i < 10; i++) {
-    this.companies.push({
-      name: "Apple",
-      photo: "../../img/test.jpg",
-    })
-  }
-
-  for (let i = 0; i < 10; i++) {
-    this.skills.push({
-      name: "C++",
-      photo: "../../img/test.jpg",
-    })
-  }
-
-  for (let i = 0; i < 10; i++) {
-    this.jobs.push({
-      name: "Developper",
-      photo: "../../img/test.jpg",
-    })
   }
 
   /**
