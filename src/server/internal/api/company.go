@@ -6,6 +6,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"server/internal/dao"
 	"strconv"
@@ -38,6 +39,26 @@ func (s *CompanyService) Get(rw http.ResponseWriter, req *http.Request) {
 	datas, err := json.Marshal(profile)
 	if err != nil {
 		internalServerError(rw, "cannot marshal profile type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(datas)
+}
+
+func (s *CompanyService) Search(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	pattern := vars["pattern"]
+
+	companies, err := s.manager.Search(pattern)
+	if err != nil {
+		internalServerError(rw, "cannot Search Company", err)
+		return
+	}
+
+	datas, err := json.Marshal(companies)
+	if err != nil {
+		internalServerError(rw, "cannot marshal company type", err)
 		return
 	}
 
