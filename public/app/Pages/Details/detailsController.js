@@ -20,6 +20,7 @@ Details.controller('DetailsController', function ($routeParams, $location, $http
   if (this.type === "companie") {
     promise.push($http.get('/api/company/' + this.id))
   } else if (this.type === "friend") {
+    console.log("friend")
     promise.push($http.get('/api/profile/' + this.id))
   } else if (this.type === "job") {
     promise.push($http.get('/api/job/' + this.id))
@@ -33,6 +34,9 @@ Details.controller('DetailsController', function ($routeParams, $location, $http
     .then((response) => {
       this.object = response[0].data
       this.object.photo = "../../img/test.jpg";
+      if (this.type === "friend"){
+        this.object.name = this.object.firstname + " " + this.object.lastname;
+      }
       if (!$scope.$$phase) {
         $scope.$apply();
       }
