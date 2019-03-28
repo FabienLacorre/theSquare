@@ -249,3 +249,23 @@ func (s *ProfileService) GetPropositionsCompanies(rw http.ResponseWriter, req *h
 	rw.Header().Set("Content-type", "application/json")
 	rw.Write(data)
 }
+
+func (s *ProfileService) GetPropositionsUsersHobbies(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	profileID, _ := strconv.Atoi(vars["id"])
+
+	hobbies, err := s.manager.GetPropositionsUsersHobbies(profileID)
+	if err != nil {
+		internalServerError(rw, "cannot GetPropositionsUsersHobbies", err)
+		return
+	}
+
+	data, err := json.Marshal(hobbies)
+	if err != nil {
+		internalServerError(rw, "cannot marshal Hobby type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(data)
+}

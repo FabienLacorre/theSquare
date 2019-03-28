@@ -567,6 +567,39 @@ func (m *ProfileManager) GetPropositionsCompanies(profileID int) ([]*Company, er
 	return companiesOutput, nil
 }
 
+func (m *ProfileManager) GetPropositionsUsersHobbies(profileID int) ([]*Hobby, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	results, err := conn.QueryNeo(`
+		MATCH (me:Profile)-[:Follow]->(p:Profile)-[:Likes]->(h:Hobby)
+		WHERE ID(me) = {profileID} AND NOT (me)-[:Likes]->(h)
+		RETURN DISTINCT h`,
+		map[string]interface{}{
+			"profileID": profileID,
+		})
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer results.Close()
+
+	hobbies := []*Hobby{}
+	for data, _, err := results.NextNeo(); err != io.EOF; data, _, err = results.NextNeo() {
+		h, _ := data[0].(graph.Node)
+
+		hobbies = append(hobbies, &Hobby{
+			Entity: Entity{ID: h.NodeIdentity},
+			Name:   h.Properties["name"].(string),
+		})
+	}
+
+	return hobbies, nil
+}
+
 func rowToProfile(row []interface{}) *Profile {
 	p, _ := row[0].(graph.Node)
 	ci, _ := row[1].(graph.Node)
