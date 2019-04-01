@@ -57,3 +57,48 @@ func (m *CompanyManager) GetByID(id int64) (*Company, error) {
 
 	return company, nil
 }
+
+func (m *CompanyManager) Search(pattern string) ([]*Company, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	r, err := conn.QueryNeo(`
+		MATCH (c:Company)-[:Attached]->(d:Domain)
+		WHERE 
+			c.name CONTAINS {pattern} OR
+			c.description CONTAINS {pattern}
+		RETURN c, d.name`,
+		map[string]interface{}{
+			"pattern": pattern,
+		})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+	defer r.Close()
+
+	companies := make(map[int64]*Company)
+	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
+		c, _ := data[0].(graph.Node)
+		d, _ := data[1].(string)
+
+		if _, ok := companies[c.NodeIdentity]; !ok {
+			companies[c.NodeIdentity] = &Company{}
+			companies[c.NodeIdentity].Entity.ID = c.NodeIdentity
+			companies[c.NodeIdentity].Name = c.Properties["name"].(string)
+			companies[c.NodeIdentity].Siret = c.Properties["siret"].(string)
+			companies[c.NodeIdentity].Siren = c.Properties["siren"].(string)
+			companies[c.NodeIdentity].Description = c.Properties["description"].(string)
+		}
+		companies[c.NodeIdentity].Domains = append(companies[c.NodeIdentity].Domains, d)
+	}
+	companiesOutput := make([]*Company, 0, len(companies))
+	for _, company := range companies {
+		companiesOutput = append(companiesOutput, company)
+	}
+
+	return companiesOutput, nil
+}

@@ -100,14 +100,17 @@ func run(ctx *cli.Context) error {
 	// companies
 	companyService := api.NewCompanyService(companyManager)
 	apiRouter.HandleFunc("/api/company/{id:[0-9]+}", companyService.Get).Methods("GET")
+	apiRouter.HandleFunc("/api/company/search/{pattern}", companyService.Search).Methods("GET")
 
 	// hobbies
 	hobbyService := api.NewHobbyService(hobbyManager)
 	apiRouter.HandleFunc("/api/hobby/{id:[0-9]+}", hobbyService.Get).Methods("GET")
+	apiRouter.HandleFunc("/api/hobby/search/{pattern}", hobbyService.Search).Methods("GET")
 
 	// jobs
 	jobService := api.NewJobService(jobManager)
 	apiRouter.HandleFunc("/api/job/{id:[0-9]+}", jobService.Get).Methods("GET")
+	apiRouter.HandleFunc("/api/job/search/{pattern}", jobService.Search).Methods("GET")
 
 	// skills
 	skillService := api.NewSkillService(skillManager)

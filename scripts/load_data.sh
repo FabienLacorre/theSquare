@@ -6,5 +6,5 @@
 
 docker rm -f `docker ps -aq`
 docker-compose up -d neo4j
-docker-compose exec neo4j /bin/bash -c 'bin/neo4j-admin load --from=data/preset/2019-03-18.dump --force && exit'
+docker-compose exec neo4j /bin/bash -c 'bin/neo4j-admin load --from=data/preset/2019-03-25.dump --force && exit'
 docker rm -f `docker ps -aq`

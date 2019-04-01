@@ -44,3 +44,23 @@ func (s *HobbyService) Get(rw http.ResponseWriter, req *http.Request) {
 	rw.Header().Set("Content-type", "application/json")
 	rw.Write(datas)
 }
+
+func (s *HobbyService) Search(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	pattern := vars["pattern"]
+
+	hobbies, err := s.manager.Search(pattern)
+	if err != nil {
+		internalServerError(rw, "cannot Search Hobbies", err)
+		return
+	}
+
+	datas, err := json.Marshal(hobbies)
+	if err != nil {
+		internalServerError(rw, "cannot marshal hobby type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(datas)
+}
