@@ -25,7 +25,7 @@ func (s *CompanyService) Get(rw http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id, _ := strconv.ParseInt(vars["id"], 10, 64)
 
-	profile, err := s.manager.GetByID(id)
+	company, err := s.manager.GetByID(id)
 	if err != nil {
 		if err == dao.ErrNotFound {
 			http.NotFound(rw, req)
@@ -35,9 +35,9 @@ func (s *CompanyService) Get(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	datas, err := json.Marshal(profile)
+	datas, err := json.Marshal(company)
 	if err != nil {
-		internalServerError(rw, "cannot marshal profile type", err)
+		internalServerError(rw, "cannot marshal company type", err)
 		return
 	}
 
@@ -63,4 +63,44 @@ func (s *CompanyService) Search(rw http.ResponseWriter, req *http.Request) {
 
 	rw.Header().Set("Content-type", "application/json")
 	rw.Write(datas)
+}
+
+func (s *CompanyService) GetLikers(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	companyID, _ := strconv.ParseInt(vars["id"], 10, 64)
+
+	profiles, err := s.manager.GetLikers(companyID)
+	if err != nil {
+		internalServerError(rw, "cannot get likers", err)
+		return
+	}
+
+	data, err := json.Marshal(profiles)
+	if err != nil {
+		internalServerError(rw, "cannont marshal profile slice type", err)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	rw.Write(data)
+}
+
+func (s *CompanyService) GetJobs(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	companyID, _ := strconv.ParseInt(vars["id"], 10, 64)
+
+	jobs, err := s.manager.GetJobs(companyID)
+	if err != nil {
+		internalServerError(rw, "cannot get Jobs", err)
+		return
+	}
+
+	data, err := json.Marshal(jobs)
+	if err != nil {
+		internalServerError(rw, "cannont marshal job slice type", err)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	rw.Write(data)
 }
