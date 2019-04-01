@@ -58,7 +58,7 @@ func (m *CompanyManager) GetByID(id int64) (*Company, error) {
 	return company, nil
 }
 
-func (m *CompanyManager) Search(pattern string) ([]*Company, error) {
+func (m *CompanyManager) Search(pattern string) (*SearchResponse, error) {
 	conn, err := m.pool.OpenPool()
 	if err != nil {
 		return nil, err
@@ -95,12 +95,15 @@ func (m *CompanyManager) Search(pattern string) ([]*Company, error) {
 		}
 		companies[c.NodeIdentity].Domains = append(companies[c.NodeIdentity].Domains, d)
 	}
-	companiesOutput := make([]*Company, 0, len(companies))
+
+	response := NewSearchResponse()
+
+	response.Companies = make([]*Company, 0, len(companies))
 	for _, company := range companies {
-		companiesOutput = append(companiesOutput, company)
+		response.Companies = append(response.Companies, company)
 	}
 
-	return companiesOutput, nil
+	return response, nil
 }
 
 func (m *CompanyManager) GetLikers(companyID int64) ([]*Profile, error) {

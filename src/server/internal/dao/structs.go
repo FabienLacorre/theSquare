@@ -45,3 +45,21 @@ type Hobby struct {
 	Entity
 	Name string `json:"name"`
 }
+
+type SearchResponse struct {
+	Companies []*Company `json:"companies"`
+	Jobs      []*Job     `json:"jobs"`
+	Profiles  []*Profile `json:"profiles"`
+	Skills    []*Skill   `json:"skills"`
+	Hobbies   []*Hobby   `json:"hobbies"`
+}
+
+func NewSearchResponse() *SearchResponse {
+	return &SearchResponse{
+		Companies: []*Company{},
+		Jobs:      []*Job{},
+		Profiles:  []*Profile{},
+		Skills:    []*Skill{},
+		Hobbies:   []*Hobby{},
+	}
+}

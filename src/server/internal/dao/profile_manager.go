@@ -117,7 +117,7 @@ func (b *ProfileManager) GetByID(id int64) (*Profile, error) {
 	return rowToProfile(results[0]), nil
 }
 
-func (b *ProfileManager) Search(pattern string) ([]*Profile, error) {
+func (b *ProfileManager) Search(pattern string) (*SearchResponse, error) {
 	conn, err := b.pool.OpenPool()
 	if err != nil {
 		return nil, err
@@ -142,13 +142,13 @@ func (b *ProfileManager) Search(pattern string) ([]*Profile, error) {
 
 	defer r.Close()
 
-	var profiles []*Profile
+	response := NewSearchResponse()
 
 	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
-		profiles = append(profiles, rowToProfile(data))
+		response.Profiles = append(response.Profiles, rowToProfile(data))
 	}
 
-	return profiles, nil
+	return response, nil
 }
 
 func (m *ProfileManager) Create(p *Profile) error {

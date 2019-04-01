@@ -69,7 +69,7 @@ func (m *HobbyManager) GetByID(id int64) (*Hobby, error) {
 	return hobby, nil
 }
 
-func (m *HobbyManager) Search(pattern string) ([]*Hobby, error) {
+func (m *HobbyManager) Search(pattern string) (*SearchResponse, error) {
 	conn, err := m.pool.OpenPool()
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (m *HobbyManager) Search(pattern string) ([]*Hobby, error) {
 
 	defer r.Close()
 
-	hobbies := []*Hobby{}
+	response := NewSearchResponse()
 
 	if err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ func (m *HobbyManager) Search(pattern string) ([]*Hobby, error) {
 			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[0]))
 		}
 
-		hobbies = append(hobbies, &Hobby{
+		response.Hobbies = append(response.Hobbies, &Hobby{
 			Entity: Entity{
 				ID: d.NodeIdentity,
 			},
@@ -111,5 +111,5 @@ func (m *HobbyManager) Search(pattern string) ([]*Hobby, error) {
 		})
 	}
 
-	return hobbies, nil
+	return response, nil
 }
