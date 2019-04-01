@@ -704,3 +704,169 @@ func (m *ProfileManager) DeleteSkill(profileID, skillID int) error {
 	}
 	return nil
 }
+
+func (m *ProfileManager) IsLikingCompany(profileID, companyID int) (bool, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return false, err
+	}
+	defer conn.Close()
+
+	results, err := conn.QueryNeo(`
+		MATCH (p:Profile), (c:Company)
+		WHERE ID(p) = {profileID} AND ID(c) = {companyID}
+		RETURN exists((p)-[:Likes]->(c))`,
+		map[string]interface{}{
+			"profileID": profileID,
+			"companyID": companyID,
+		})
+	if err != nil {
+		return false, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer results.Close()
+
+	data, _, err := results.All()
+	if err != nil {
+		return false, fmt.Errorf("cannot get All results: %v", err)
+	}
+
+	if len(data) != 1 {
+		return false, nil
+	}
+
+	return data[0][0].(bool), nil
+}
+
+func (m *ProfileManager) IsLikingHobby(profileID, hobbyID int) (bool, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return false, err
+	}
+	defer conn.Close()
+
+	results, err := conn.QueryNeo(`
+		MATCH (p:Profile), (h:Hobby)
+		WHERE ID(p) = {profileID} AND ID(h) = {hobbyID}
+		RETURN exists((p)-[:Likes]->(h))`,
+		map[string]interface{}{
+			"profileID": profileID,
+			"hobbyID":   hobbyID,
+		})
+	if err != nil {
+		return false, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer results.Close()
+
+	data, _, err := results.All()
+	if err != nil {
+		return false, fmt.Errorf("cannot get All results: %v", err)
+	}
+
+	if len(data) != 1 {
+		return false, nil
+	}
+
+	return data[0][0].(bool), nil
+}
+
+func (m *ProfileManager) IsUsingSkill(profileID, skillID int) (bool, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return false, err
+	}
+	defer conn.Close()
+
+	results, err := conn.QueryNeo(`
+		MATCH (p:Profile), (s:Skill)
+		WHERE ID(p) = {profileID} AND ID(s) = {skillID}
+		RETURN exists((p)-[:Likes]->(s))`,
+		map[string]interface{}{
+			"profileID": profileID,
+			"skillID":   skillID,
+		})
+	if err != nil {
+		return false, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer results.Close()
+
+	data, _, err := results.All()
+	if err != nil {
+		return false, fmt.Errorf("cannot get All results: %v", err)
+	}
+
+	if len(data) != 1 {
+		return false, nil
+	}
+
+	return data[0][0].(bool), nil
+}
+
+func (m *ProfileManager) IsFollowingProfile(profileID, otherProfileID int) (bool, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return false, err
+	}
+	defer conn.Close()
+
+	results, err := conn.QueryNeo(`
+		MATCH (me:Profile) WHERE ID(me) = {profileID} WITH me
+		MATCH (p:Profile)
+		WHERE p <> me AND ID(p) = {otherProfileID}
+		RETURN exists((me)-[:Follow]->(p))`,
+		map[string]interface{}{
+			"profileID":      profileID,
+			"otherProfileID": otherProfileID,
+		})
+	if err != nil {
+		return false, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer results.Close()
+
+	data, _, err := results.All()
+	if err != nil {
+		return false, fmt.Errorf("cannot get All results: %v", err)
+	}
+
+	if len(data) != 1 {
+		return false, nil
+	}
+
+	return data[0][0].(bool), nil
+}
+
+func (m *ProfileManager) IsLikingJob(profileID, jobID int) (bool, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return false, err
+	}
+	defer conn.Close()
+
+	results, err := conn.QueryNeo(`
+		MATCH (p:Profile), (j:Job)
+		WHERE ID(p) = {profileID} AND ID(j) = {jobID}
+		RETURN exists((p)-[:Likes]->(j))`,
+		map[string]interface{}{
+			"profileID": profileID,
+			"jobID":     jobID,
+		})
+	if err != nil {
+		return false, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer results.Close()
+
+	data, _, err := results.All()
+	if err != nil {
+		return false, fmt.Errorf("cannot get All results: %v", err)
+	}
+
+	if len(data) != 1 {
+		return false, nil
+	}
+
+	return data[0][0].(bool), nil
+}
