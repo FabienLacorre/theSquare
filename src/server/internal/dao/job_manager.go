@@ -67,7 +67,7 @@ func (m *JobManager) GetByID(id int64) (*Job, error) {
 	return job, nil
 }
 
-func (m *JobManager) Search(pattern string) ([]*Job, error) {
+func (m *JobManager) Search(pattern string) (*SearchResponse, error) {
 	conn, err := m.pool.OpenPool()
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (m *JobManager) Search(pattern string) ([]*Job, error) {
 
 	defer r.Close()
 
-	jobs := []*Job{}
+	response := NewSearchResponse()
 
 	if err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ func (m *JobManager) Search(pattern string) ([]*Job, error) {
 			return nil, fmt.Errorf("invalid type, expected `graph.Node` but got `%s`", reflect.TypeOf(data[0]))
 		}
 
-		jobs = append(jobs, &Job{
+		response.Jobs = append(response.Jobs, &Job{
 			Entity: Entity{
 				ID: d.NodeIdentity,
 			},
@@ -113,7 +113,7 @@ func (m *JobManager) Search(pattern string) ([]*Job, error) {
 		})
 	}
 
-	return jobs, nil
+	return response, nil
 }
 
 // func (b *DataManager) GetJobWithName(pattern string) error {
