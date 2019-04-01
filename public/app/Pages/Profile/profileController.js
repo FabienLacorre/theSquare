@@ -94,14 +94,30 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
   /**
   * @brief follow handler button
   */
-  this.followClick = (obj) => {
+  this.followClick = (obj, type) => {
     console.log("follow", obj)
+    console.log("type", type)
+    $http.post('/api/profile/' + this.userId + "/" + type + "/" + obj.id)
+    .then((response) => response.data)
+    .then((response) => {
+      console.log(response)
+      $location.path('/Profile')
+    }).catch(() => alert("ERROR REQUEST"))
+    
   }
 
   /**
    * @brief unfollow handler button
    */
-  this.unfollowClick = (obj) => {
+  this.unfollowClick = (obj, type) => {
     console.log("unfollow", obj)
+    console.log("type", type)
+    $http.delete('/api/profile/' + this.userId + "/" + type + "/" + obj.id)
+    .then((response) => response.data)
+    .then((response) => {
+      console.log(response)
+      $location.path('/Profile')
+    }).catch(() => alert("ERROR REQUEST"))
+    
   }
 });

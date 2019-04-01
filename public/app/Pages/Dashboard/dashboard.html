@@ -71,19 +71,20 @@
             <div class="SeachDivDashboard">
                 <div class="row">
                     <div class="col-md-6">
-                        <input type="text" class="form-control" placeholder="Search ...">
+                        <input type="text" class="form-control" placeholder="Search ..." ng-model="$ctrl.pattern">
                     </div>
                     <div class="col-md-3">
-                        <select id="" class="form-control">
-                            <option value="">All</option>
-                            <option value="">Companies</option>
-                            <option value="">Jobs</option>
-                            <option value="">Hobbies</option>
-                            <option value="">Friends</option>
+                        <select id="" class="form-control" ng-model="$ctrl.searchValue">
+                            <option value="all">All</option>
+                            <option value="company">Companies</option>
+                            <option value="job">Jobs</option>
+                            <option value="hobby">Hobbies</option>
+                            <option value="profile">Friends</option>
+                            <option value="skill">Skills</option>
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <button class="btn btn-primary" style="width: 100%">Search</button>
+                        <button class="btn btn-primary" style="width: 100%" ng-click="$ctrl.submitSearch()">Search</button>
                     </div>
                 </div>
             </div>

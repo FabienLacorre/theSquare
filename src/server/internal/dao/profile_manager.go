@@ -869,4 +869,26 @@ func (m *ProfileManager) IsLikingJob(profileID, jobID int) (bool, error) {
 	}
 
 	return data[0][0].(bool), nil
+
+}
+
+func (m *ProfileManager) DeleteJob(profileID, jobID int) error {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = conn.ExecNeo(`
+		MATCH (p:Profile)-[r:Likes]-(j:Job)
+		WHERE ID(p) = {profileID} AND ID(j) = {jobID}
+		DELETE r`,
+		map[string]interface{}{
+			"profileID": profileID,
+			"jobID":     jobID,
+		})
+	if err != nil {
+		return fmt.Errorf("cannot query: %v", err)
+	}
+	return nil
 }
