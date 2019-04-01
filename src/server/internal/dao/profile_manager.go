@@ -620,3 +620,87 @@ func rowToProfile(row []interface{}) *Profile {
 		EducationLevel: e.Properties["level"].(int64),
 	}
 }
+
+func (m *ProfileManager) DeleteHobby(profileID, hobbyID int) error {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = conn.ExecNeo(`
+		MATCH (p:Profile)-[r:Likes]-(h:Hobby)
+		WHERE ID(p) = {profileID} AND ID(h) = {hobbyID}
+		DELETE r`,
+		map[string]interface{}{
+			"profileID": profileID,
+			"hobbyID":   hobbyID,
+		})
+	if err != nil {
+		return fmt.Errorf("cannot query: %v", err)
+	}
+	return nil
+}
+
+func (m *ProfileManager) DeleteCompany(profileID, companyID int) error {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = conn.ExecNeo(`
+		MATCH (p:Profile)-[r:Likes]-(c:Company)
+		WHERE ID(p) = {profileID} AND ID(c) = {companyID}
+		DELETE r`,
+		map[string]interface{}{
+			"profileID": profileID,
+			"companyID": companyID,
+		})
+	if err != nil {
+		return fmt.Errorf("cannot query: %v", err)
+	}
+	return nil
+}
+
+func (m *ProfileManager) DeleteFollow(profileID, followedID int) error {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = conn.ExecNeo(`
+		MATCH (p:Profile)-[r:Follow]-(f:Profile)
+		WHERE ID(p) = {profileID} AND ID(f) = {followedID}
+		DELETE r`,
+		map[string]interface{}{
+			"profileID":  profileID,
+			"followedID": followedID,
+		})
+	if err != nil {
+		return fmt.Errorf("cannot query: %v", err)
+	}
+	return nil
+}
+
+func (m *ProfileManager) DeleteSkill(profileID, skillID int) error {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = conn.ExecNeo(`
+		MATCH (p:Profile)-[r:Uses]-(s:Skill)
+		WHERE ID(p) = {profileID} AND ID(s) = {skillID}
+		DELETE r`,
+		map[string]interface{}{
+			"profileID": profileID,
+			"skillID":   skillID,
+		})
+	if err != nil {
+		return fmt.Errorf("cannot query: %v", err)
+	}
+	return nil
+}

@@ -269,3 +269,47 @@ func (s *ProfileService) GetPropositionsUsersHobbies(rw http.ResponseWriter, req
 	rw.Header().Set("Content-type", "application/json")
 	rw.Write(data)
 }
+
+func (s *ProfileService) DeleteHobby(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+	idUnliked, _ := strconv.Atoi(vars["hobby_id"])
+
+	if err := s.manager.DeleteHobby(id, idUnliked); err != nil {
+		internalServerError(rw, "cannot delete", err)
+		return
+	}
+}
+
+func (s *ProfileService) DeleteCompany(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+	idUnliked, _ := strconv.Atoi(vars["company_id"])
+
+	if err := s.manager.DeleteCompany(id, idUnliked); err != nil {
+		internalServerError(rw, "cannot delete", err)
+		return
+	}
+}
+
+func (s *ProfileService) DeleteFollow(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+	idUnliked, _ := strconv.Atoi(vars["profile_id"])
+
+	if err := s.manager.DeleteFollow(id, idUnliked); err != nil {
+		internalServerError(rw, "cannot delete", err)
+		return
+	}
+}
+
+func (s *ProfileService) DeleteSkill(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+	idUnliked, _ := strconv.Atoi(vars["skill_id"])
+
+	if err := s.manager.DeleteSkill(id, idUnliked); err != nil {
+		internalServerError(rw, "cannot delete", err)
+		return
+	}
+}
