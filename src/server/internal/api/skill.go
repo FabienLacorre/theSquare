@@ -44,3 +44,23 @@ func (s *SkillService) Get(rw http.ResponseWriter, req *http.Request) {
 	rw.Header().Set("Content-type", "application/json")
 	rw.Write(datas)
 }
+
+func (s *SkillService) Search(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	pattern := vars["pattern"]
+
+	skills, err := s.manager.Search(pattern)
+	if err != nil {
+		internalServerError(rw, "cannot Search Skills", err)
+		return
+	}
+
+	datas, err := json.Marshal(skills)
+	if err != nil {
+		internalServerError(rw, "cannot marshal skill type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(datas)
+}

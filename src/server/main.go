@@ -98,6 +98,7 @@ func run(ctx *cli.Context) error {
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/jobs", profileService.GetJobs).Methods("GET")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/jobs/{job_id:[0-9]+}", profileService.IsLikingJob).Methods("GET")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/jobs/{job_id:[0-9]+}", profileService.PostJob).Methods("POST")
+	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/jobs/{job_id:[0-9]+}", profileService.DeleteJob).Methods("DELETE")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/propositions/users", profileService.GetPropositionsUsers).Methods("GET")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/propositions/users/hobbies", profileService.GetPropositionsUsersHobbies).Methods("GET")
 	apiRouter.HandleFunc("/api/profile/{id:[0-9]+}/propositions/companies", profileService.GetPropositionsCompanies).Methods("GET")
@@ -123,9 +124,10 @@ func run(ctx *cli.Context) error {
 	// skills
 	skillService := api.NewSkillService(skillManager)
 	apiRouter.HandleFunc("/api/skill/{id:[0-9]+}", skillService.Get).Methods("GET")
+	apiRouter.HandleFunc("/api/skill/search/{pattern:.*?}", skillService.Search).Methods("GET")
 
 	// common
-	apiRouter.HandleFunc("/api/all/search/{pattern:.*?}", api.SearchAll(profileManager, companyManager, hobbyManager, jobManager)).Methods("GET")
+	apiRouter.HandleFunc("/api/all/search/{pattern:.*?}", api.SearchAll(profileManager, companyManager, hobbyManager, jobManager, skillManager)).Methods("GET")
 
 	router.PathPrefix("/api/").Handler(negroni.New(
 		negronilogrus.NewMiddleware(),

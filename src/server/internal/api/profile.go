@@ -389,6 +389,17 @@ func (s *ProfileService) IsLikingJob(rw http.ResponseWriter, req *http.Request) 
 	rw.Write([]byte(strconv.FormatBool(isLiking)))
 }
 
+func (s *ProfileService) DeleteJob(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
+	idUnliked, _ := strconv.Atoi(vars["job_id"])
+
+	if err := s.manager.DeleteJob(id, idUnliked); err != nil {
+		internalServerError(rw, "cannot delete", err)
+		return
+	}
+}
+
 func (s *ProfileService) Search(rw http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	pattern := vars["pattern"]

@@ -110,13 +110,34 @@ Dashboard.controller('DashboardController', function ($location, $http) {
     }).catch(() => alert("ERROR REQUEST"))
   }
 
-  this.createdashboad(`/api/company/search/`);
+  this.createdashboad(`/api/all/search/`);
 
   /**
    * @brief follow handler button
    */
   this.followClick = (obj) => {
     console.log("follow", obj)
+    let route = ""
+    if (obj.type === "companie"){
+      route += "/api/profile/" + localStorage.getItem("id") + "/companies/" + obj.id; 
+    }
+    if (obj.type === "job"){
+      route += "/api/profile/" + localStorage.getItem("id") + "/jobs/" + obj.id;
+    }
+    if (obj.type === "friend"){
+      route += "/api/profile/" + localStorage.getItem("id") + "/follow/" + obj.id;
+    }
+    if (obj.type === "skill"){
+      route += "/api/profile/" + localStorage.getItem("id") + "/skills/" + obj.id;
+    }
+    if (obj.type === "hobbie"){
+      route += "/api/profile/" + localStorage.getItem("id") + "/hobbies/" + obj.id;
+    }
+    $http.post(route)
+    .then((response) => response.data)
+    .then((response) => {
+      console.log(response)
+    }).catch(() => alert("ERROR REQUEST"))
   }
 
   /**
@@ -124,6 +145,27 @@ Dashboard.controller('DashboardController', function ($location, $http) {
    */
   this.unfollowClick = (obj) => {
     console.log("unfollow", obj)
+    let route = ""
+    if (obj.type === "companie"){
+      route += "/api/profile/" + localStorage.getItem("id") + "/companies/" + obj.id; 
+    }
+    if (obj.type === "job"){
+      route += "/api/profile/" + localStorage.getItem("id") + "/jobs/" + obj.id;
+    }
+    if (obj.type === "friend"){
+      route += "/api/profile/" + localStorage.getItem("id") + "/follow/" + obj.id;
+    }
+    if (obj.type === "skill"){
+      route += "/api/profile/" + localStorage.getItem("id") + "/skills/" + obj.id;
+    }
+    if (obj.type === "hobbie"){
+      route += "/api/profile/" + localStorage.getItem("id") + "/hobbies/" + obj.id;
+    }
+    $http.delete(route)
+    .then((response) => response.data)
+    .then((response) => {
+      console.log(response)
+    }).catch(() => alert("ERROR REQUEST"))
   }
 
   /**

@@ -20,7 +20,7 @@ func internalServerError(rw http.ResponseWriter, message string, err error) {
 	http.Error(rw, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
-func SearchAll(profileManager *dao.ProfileManager, companyManager *dao.CompanyManager, hobbyManager *dao.HobbyManager, jobManager *dao.JobManager) func(rw http.ResponseWriter, req *http.Request) {
+func SearchAll(profileManager *dao.ProfileManager, companyManager *dao.CompanyManager, hobbyManager *dao.HobbyManager, jobManager *dao.JobManager, skillManager *dao.SkillManager) func(rw http.ResponseWriter, req *http.Request) {
 	return func(rw http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
 		pattern := vars["pattern"]
@@ -30,6 +30,7 @@ func SearchAll(profileManager *dao.ProfileManager, companyManager *dao.CompanyMa
 			companyManager.Search,
 			hobbyManager.Search,
 			jobManager.Search,
+			skillManager.Search,
 		}
 
 		response := dao.NewSearchResponse()
@@ -41,6 +42,7 @@ func SearchAll(profileManager *dao.ProfileManager, companyManager *dao.CompanyMa
 				return
 			}
 
+			response.Skills = append(response.Skills, r.Skills...)
 			response.Companies = append(response.Companies, r.Companies...)
 			response.Profiles = append(response.Profiles, r.Profiles...)
 			response.Jobs = append(response.Jobs, r.Jobs...)
