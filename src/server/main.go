@@ -118,6 +118,9 @@ func run(ctx *cli.Context) error {
 	skillService := api.NewSkillService(skillManager)
 	apiRouter.HandleFunc("/api/skill/{id:[0-9]+}", skillService.Get).Methods("GET")
 
+	// common
+	apiRouter.HandleFunc("/api/all/search/{pattern:.*?}", api.SearchAll(profileManager, companyManager, hobbyManager, jobManager)).Methods("GET")
+
 	router.PathPrefix("/api/").Handler(negroni.New(
 		negronilogrus.NewMiddleware(),
 		sessions.Sessions("session", store),
