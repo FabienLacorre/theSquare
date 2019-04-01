@@ -313,3 +313,78 @@ func (s *ProfileService) DeleteSkill(rw http.ResponseWriter, req *http.Request) 
 		return
 	}
 }
+
+func (s *ProfileService) IsLikingCompany(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	profileID, _ := strconv.Atoi(vars["id"])
+	companyID, _ := strconv.Atoi(vars["company_id"])
+
+	isLiking, err := s.manager.IsLikingCompany(profileID, companyID)
+	if err != nil {
+		internalServerError(rw, "cannot get company", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write([]byte(strconv.FormatBool(isLiking)))
+}
+
+func (s *ProfileService) IsLikingHobby(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	profileID, _ := strconv.Atoi(vars["id"])
+	hobbyID, _ := strconv.Atoi(vars["hobby_id"])
+
+	isLiking, err := s.manager.IsLikingHobby(profileID, hobbyID)
+	if err != nil {
+		internalServerError(rw, "cannot get company", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write([]byte(strconv.FormatBool(isLiking)))
+}
+
+func (s *ProfileService) IsUsingSkill(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	profileID, _ := strconv.Atoi(vars["id"])
+	skillID, _ := strconv.Atoi(vars["skill_id"])
+
+	isUsing, err := s.manager.IsUsingSkill(profileID, skillID)
+	if err != nil {
+		internalServerError(rw, "cannot get skill", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write([]byte(strconv.FormatBool(isUsing)))
+}
+
+func (s *ProfileService) IsFollowingProfile(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	profileID, _ := strconv.Atoi(vars["id"])
+	otherProfileID, _ := strconv.Atoi(vars["profile_id"])
+
+	isFollowing, err := s.manager.IsFollowingProfile(profileID, otherProfileID)
+	if err != nil {
+		internalServerError(rw, "cannot get profile", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write([]byte(strconv.FormatBool(isFollowing)))
+}
+
+func (s *ProfileService) IsLikingJob(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	profileID, _ := strconv.Atoi(vars["id"])
+	jobID, _ := strconv.Atoi(vars["job_id"])
+
+	isLiking, err := s.manager.IsLikingJob(profileID, jobID)
+	if err != nil {
+		internalServerError(rw, "cannot get job", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write([]byte(strconv.FormatBool(isLiking)))
+}
