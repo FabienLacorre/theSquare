@@ -130,3 +130,38 @@ func (m *CompanyManager) GetLikers(companyID int64) ([]*Profile, error) {
 
 	return profiles, nil
 }
+
+func (m *CompanyManager) GetJobs(companyID int64) ([]*Job, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	r, err := conn.QueryNeo(`
+		MATCH (c:Company)-[:Offers]->(j:Job) WHERE ID(c) = {companyID} RETURN j`,
+		map[string]interface{}{
+			"companyID": companyID,
+		})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+
+	defer r.Close()
+
+	jobs := []*Job{}
+	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
+		n, _ := data[0].(graph.Node)
+		jobs = append(jobs, &Job{
+			Entity: Entity{
+				ID: n.NodeIdentity,
+			},
+			Name:        n.Properties["name"].(string),
+			GrossWage:   n.Properties["grossWage"].(string),
+			Description: n.Properties["description"].(string),
+		})
+	}
+
+	return jobs, nil
+}
