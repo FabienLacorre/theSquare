@@ -388,3 +388,23 @@ func (s *ProfileService) IsLikingJob(rw http.ResponseWriter, req *http.Request) 
 	rw.Header().Set("Content-type", "application/json")
 	rw.Write([]byte(strconv.FormatBool(isLiking)))
 }
+
+func (s *ProfileService) Search(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	pattern := vars["pattern"]
+
+	profiles, err := s.manager.Search(pattern)
+	if err != nil {
+		internalServerError(rw, "cannot Search Profile", err)
+		return
+	}
+
+	datas, err := json.Marshal(profiles)
+	if err != nil {
+		internalServerError(rw, "cannot marshal profile type", err)
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.Write(datas)
+}
