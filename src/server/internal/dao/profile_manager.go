@@ -168,6 +168,7 @@ func (m *ProfileManager) Create(p *Profile) error {
 				firstname: {fname},
 				lastname: {lname},
 				birthday: {birthday}
+				image: {image}
 			})
 		CREATE (ci)-[:Located]->(co)
 		CREATE (p)-[:Lives]->(ci)`,
@@ -180,6 +181,7 @@ func (m *ProfileManager) Create(p *Profile) error {
 			"lname":           strings.Title(p.Lastname),
 			"birthday":        p.Birthday,
 			"education_level": p.EducationLevel,
+			"image":           p.Image,
 		},
 	)
 
