@@ -2,10 +2,10 @@
     .mainDivDetails {
         position: absolute;
         left: 50%;
-        height: 70%;
+        min-height: 70%;
         margin-top: 5%;
         transform: translateX(-50%);
-        width: 70%;
+        width: 90%;
         background: rgba(0, 0, 10, 0.6);
         padding: 20px;
     }
@@ -28,8 +28,8 @@
             profile</button>
         <button class="btn btn-danger buttonBackDetails" ng-click="$ctrl.changeLocation('Proposition')">Back to
             proposals</button>
-        <button class="btn btn-danger float-right" style="margin-right: 10px;">UNFOLLOW</button>
-        <button class="btn btn-primary float-right" style="margin-right: 10px;">FOLLOW</button>
+        <button ng-if="$ctrl.isLike" ng-click="$ctrl.unfollowClick($ctrl.object)" class="btn btn-danger float-right" style="margin-right: 10px;">UNFOLLOW</button>
+        <button ng-if="!$ctrl.isLike" ng-click="$ctrl.followClick($ctrl.object)" class="btn btn-primary float-right" style="margin-right: 10px;">FOLLOW</button>
         <div class="row">
             <h2 style="margin-right: 20px; margin-left: 15px;">{{$ctrl.type | uppercase}}</h2>
             <h2 style="color: white">{{$ctrl.object.name | uppercase}}</h2>
@@ -45,7 +45,75 @@
         <br>
         <h3 style="color: white;">DESCRIPTION</h3>
         <span>{{$ctrl.object.description}}</span>
+        <div ng-if="$ctrl.type == 'companie'">
+            <br>
+            <label for="" style="color: white">Likers</label>
+            <ul>
+                <li style="color: white" ng-repeat="elem in $ctrl.companyLikers">
+                    <a href="#!/Details/friend/{{elem.id}}">{{elem.firstname}} {{elem.lastname}}</a>
+                </li>
+            </ul>
 
+            <label for="" style="color: white">Jobs</label>
+            <ul>
+                <li ng-repeat="elem in $ctrl.companyJobs" style="color: white">
+                    <a href="#!/Details/job/{{elem.id}}">{{elem.name}}</a>
+                </li>
+            </ul>
+        </div>
+
+        <div ng-if="$ctrl.type == 'hobbie'">
+            <br>
+            <label for="" style="color: white">Likers</label>
+            <ul>
+                <li style="color: white" ng-repeat="elem in $ctrl.hobbieLikers">
+                    <a href="#!/Details/friend/{{elem.id}}">{{elem.firstname}} {{elem.lastname}}</a>
+                </li>
+            </ul>
+        </div>
+
+        <div ng-if="$ctrl.type == 'friend'">
+            <br>
+
+            <div class="row">
+                <div class="col-md-2">
+                    <label for="" style="color: white">Companies</label>
+                    <li style="color: white" ng-repeat="elem in $ctrl.friendCompanies">
+                        <a href="#!/Details/companie/{{elem.id}}">{{elem.name}}</a>
+                    </li>
+                </div>
+                <div class="col-md-2">
+                    <label for="" style="color: white">Hobbies</label>
+                    <li style="color: white" ng-repeat="elem in $ctrl.friendHobbies">
+                        <a href="#!/Details/hobbie/{{elem.id}}">{{elem.name}}</a>
+                    </li>
+                </div>
+                <div class="col-md-2">
+                    <label for="" style="color: white">Skills</label>
+                    <li style="color: white" ng-repeat="elem in $ctrl.friendSkills">
+                        <a href="#!/Details/skill/{{elem.id}}">{{elem.name}}</a>
+                    </li>
+                </div>
+                <div class="col-md-2">
+                    <label for="" style="color: white">Friends</label>
+                    <li style="color: white" ng-repeat="elem in $ctrl.friendFollowed">
+                        <a href="#!/Details/friend/{{elem.id}}">{{elem.firstname}} {{elem.lastname}}</a>
+                    </li>
+                </div>
+                <div class="col-md-2">
+                    <label for="" style="color: white">Jobs</label>
+                    <li style="color: white" ng-repeat="elem in $ctrl.friendJobs">
+                        <a href="#!/Details/job/{{elem.id}}">{{elem.name}}</a>
+                    </li>
+                </div>
+
+            </div>
+            <ul>
+                <li style="color: white" ng-repeat="elem in $ctrl.hobbieLikers">
+                    <a href="#!/Details/friend/{{elem.id}}">{{elem.firstname}} {{elem.lastname}}</a>
+                </li>
+            </ul>
+        </div>
 
     </div>
 </div>

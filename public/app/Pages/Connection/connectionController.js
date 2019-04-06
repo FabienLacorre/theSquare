@@ -25,13 +25,9 @@ Connection.controller('ConnectionController', function ($location, $http) {
      * if OK redirect to dashboard page
      */
     this.tryToLogin = () => {
-        console.log(this.username)
-        console.log(this.password)
         let base64 = btoa(this.username + ":" + this.password);
-        console.log(base64)
         $http.post('/api/login', null, { headers: { Authorization: 'Basic ' + base64 } }).then((response) => response.data)
             .then((response) => {
-                console.log(response)
                 window.localStorage.setItem('id', response.id);
                 $location.path('/Dashboard');
             }).catch((error) => console.error(error))
@@ -41,7 +37,6 @@ Connection.controller('ConnectionController', function ($location, $http) {
      * @brief redirect user to sign in page
      */
     this.goSignIn = () => {
-        console.log("SIGN IN ")
         $location.path('/SignIn');
     }
 });

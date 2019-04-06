@@ -25,7 +25,7 @@ Profile.config(['$routeProvider', function ($routeProvider) {
       this.userConnected = this.userConnected.map((elem) => {
         return {
           nom: elem.firstname + " " + elem.lastname,
-          photo: "../../img/devlogo.png",
+          photo: elem.image != null && elem.image != "" ? elem.image : "../../img/devlogo.png",
           description: elem.description,
           type: 'friend',
           id: elem.id,
@@ -43,7 +43,7 @@ Profile.config(['$routeProvider', function ($routeProvider) {
         this.hobbiesConnected = this.hobbiesConnected.map((elem) => {
           return {
             nom: elem.name,
-            photo: "../../img/devlogo.png",
+            photo: elem.image != null && elem.image != "" ? elem.image : "../../img/devlogo.png",
             description: elem.description,
             type: 'hobbie',
             id: elem.id,
@@ -60,7 +60,7 @@ Profile.config(['$routeProvider', function ($routeProvider) {
           this.companiesConnected = this.companiesConnected.map((elem) => {
             return {
               nom: elem.name,
-              photo: "../../img/devlogo.png",
+              photo: elem.image != null && elem.image != "" ? elem.image : "../../img/devlogo.png",
               description: elem.description,
               type: 'companie',
               id: elem.id,

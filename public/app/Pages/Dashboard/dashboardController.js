@@ -38,7 +38,7 @@ Dashboard.controller('DashboardController', function ($location, $http, $scope) 
       this.dashboardObjects.companies = this.dashboardObjects.companies.map((elem) => {
         return {
           nom: elem.name,
-          photo: "../../img/devlogo.png",
+          photo: elem.image != null && elem.image != "" ? elem.image : "../../img/devlogo.png",
           description: elem.description,
           type: 'companie',
           id: elem.id
@@ -60,10 +60,10 @@ Dashboard.controller('DashboardController', function ($location, $http, $scope) 
       this.dashboardObjects.profiles = this.dashboardObjects.profiles.map((elem) => {
         return {
           nom: elem.firstname + " " + elem.lastname,
-          photo: "../../img/devlogo.png",
+          photo: elem.image,
           description: elem.description,
           type: 'friend',
-          id: elem.id
+          id: elem.id,
         }
       })
       this.dashboardObjects.profiles.forEach(element => {this.finalObjects.push(element)})    

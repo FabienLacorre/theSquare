@@ -14,7 +14,6 @@ Profile.config(['$routeProvider', function ($routeProvider) {
  * @brief Profile controller
  */
 Profile.controller('ProfileController', function ($location, $http, $scope) {
-  console.log("hello dashboar controller")
   this.userId = localStorage.getItem("id");
   document.getElementById('test').style.display = "";
   this.hobbies = [];
@@ -29,8 +28,10 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
   $http.get('/api/profile/' + this.userId)
     .then((response) => response.data)
     .then((response) => {
-      console.log(response);
       this.me = response
+      if (this.me.image == null || this.me.image == ""){
+        this.me.image = "../../img/test.jpg"
+      }
 
       const promises = []
 
@@ -43,10 +44,9 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
       Promise.all(promises)
         .then((responses) => {
           responses = responses.map(elem => elem.data)
-          console.log(responses)
           this.companies = responses[0];
           this.companies.forEach((elem) => {
-            elem.photo = "../../img/test.jpg"
+            elem.photo = elem.image != null && elem.image !== "" ? elem.image : "../../img/test.jpg"
             elem.isLike = true
           })
           this.hobbies = responses[1];
@@ -61,7 +61,7 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
           })
           this.friends = responses[3];
           this.friends.forEach((elem) => {
-            elem.photo = "../../img/test.jpg"
+            elem.photo = elem.image != null && elem.image !== "" ? elem.image : "../../img/test.jpg"
             elem.isLike = true
           })
           this.jobs = responses[4];
@@ -92,7 +92,6 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
    * @brief change location page for detail page
    */
   this.moveToDetails = (type, id) => {
-    console.log("move to details")
     $location.path('/Details/' + type + "/" + id)
   }
 
@@ -100,12 +99,9 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
   * @brief follow handler button
   */
   this.followClick = (obj, type) => {
-    console.log("follow", obj)
-    console.log("type", type)
     $http.post('/api/profile/' + this.userId + "/" + type + "/" + obj.id)
     .then((response) => response.data)
     .then((response) => {
-      console.log(response)
       obj.isLike = !obj.isLike
       $location.path('/Profile')
     }).catch(() => alert("ERROR REQUEST"))
@@ -116,12 +112,9 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
    * @brief unfollow handler button
    */
   this.unfollowClick = (obj, type) => {
-    console.log("unfollow", obj)
-    console.log("type", type)
     $http.delete('/api/profile/' + this.userId + "/" + type + "/" + obj.id)
     .then((response) => response.data)
     .then((response) => {
-      console.log(response)
       obj.isLike = !obj.isLike
       $location.path('/Profile')
     }).catch(() => alert("ERROR REQUEST"))
