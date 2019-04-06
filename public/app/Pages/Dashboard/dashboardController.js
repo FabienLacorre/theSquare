@@ -13,7 +13,7 @@ Dashboard.config(['$routeProvider', function ($routeProvider) {
 /**
  * @brief Dashboard controller
  */
-Dashboard.controller('DashboardController', function ($location, $http) {
+Dashboard.controller('DashboardController', function ($location, $http, $scope) {
   console.log("hello dashboar controller")
   document.getElementById('test').style.display = "";
 
@@ -23,20 +23,6 @@ Dashboard.controller('DashboardController', function ($location, $http) {
   this.searchValue = "all"
 
   this.submitSearch = () => {
-    /*$http.get(`/api/${this.searchValue}/search/${this.pattern}`).then((response) => response.data)
-    .then((response) => {
-      console.log(this.searchValue)
-      console.log(response)
-      this.dashboardObjects = response
-      this.dashboardObjects = this.dashboardObjects.map((elem) => {
-        return {
-          nom: elem.name,
-          photo: "../../img/devlogo.png",
-          description: elem.description,
-        }
-      })
-    }).catch(() => alert("ERROR REQUEST"))*/
-
     this.createdashboad(`/api/${this.searchValue}/search/${this.pattern}`)
   }
 
@@ -105,8 +91,38 @@ Dashboard.controller('DashboardController', function ($location, $http) {
       this.dashboardObjects.hobbies.forEach(element => {this.finalObjects.push(element  )})    
 
       this.dashboardObjects = this.finalObjects
-  
-      console.log(this.dashboardObjects)
+      const promises = []
+      this.dashboardObjects.forEach((elem) => {
+          if (elem.type === "companie"){
+            promises.push($http.get('/api/profile/' + localStorage.getItem("id") + "/companies/" + elem.id))
+          }
+          if (elem.type === "job"){
+            promises.push($http.get('/api/profile/' + localStorage.getItem("id") + "/jobs/" + elem.id))
+          }
+          if (elem.type === "friend"){
+            promises.push($http.get('/api/profile/' + localStorage.getItem("id") + "/follow/" + elem.id))
+          }
+          if (elem.type === "skill"){
+            promises.push($http.get('/api/profile/' + localStorage.getItem("id") + "/skills/" + elem.id))
+          }
+          if (elem.type === "hobbie"){
+            promises.push($http.get('/api/profile/' + localStorage.getItem("id") + "/hobbies/" + elem.id))
+          }
+      })
+      Promise.all(promises)
+      .then((response) => {
+        response = response.map(elem => elem.data)
+        let i = 0;
+        response.forEach((elem) => {
+          console.log(elem)
+          this.dashboardObjects[i].isLike = elem
+          i++;
+        })
+        if (!$scope.$$phase) {
+          $scope.$apply();
+        }
+        console.log(this.dashboardObjects)
+      }).catch(() => alert("Error date loading"))
     }).catch(() => alert("ERROR REQUEST"))
   }
 
@@ -137,6 +153,7 @@ Dashboard.controller('DashboardController', function ($location, $http) {
     .then((response) => response.data)
     .then((response) => {
       console.log(response)
+      obj.isLike = !obj.isLike 
     }).catch(() => alert("ERROR REQUEST"))
   }
 
@@ -165,6 +182,7 @@ Dashboard.controller('DashboardController', function ($location, $http) {
     .then((response) => response.data)
     .then((response) => {
       console.log(response)
+      obj.isLike = !obj.isLike 
     }).catch(() => alert("ERROR REQUEST"))
   }
 

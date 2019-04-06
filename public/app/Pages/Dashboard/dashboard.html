@@ -113,9 +113,9 @@
                     <br>
                     <div class="buttonsDashboar">
                         <div class="float-right" style="margin-right: 0px">
-                            <button class="btn btn-primary" ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
+                            <button ng-if="!object.isLike" class="btn btn-primary" ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
                                     class="fa fa-thumbs-up"></span></button>
-                            <button class="btn btn-danger" ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
+                            <button ng-if="object.isLike" class="btn btn-danger" ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
                                     class="fa fa-thumbs-down"></span></button>
                         </div>
                     </div>
