@@ -42,6 +42,7 @@ SignIn.controller('SignInController', function ($location, $http) {
         console.log("validation account")
         console.log(this.newUser)
 
+        console.log(this.image)
         $http.post('/sign-in', {
             login: this.newUser.login,
             password: this.newUser.password,
@@ -50,10 +51,36 @@ SignIn.controller('SignInController', function ($location, $http) {
             birthDate: this.newUser.birthDate,
             country: this.newUser.country,
             city: this.newUser.city,
+            image: this.image,
         }).then(response => response.data)
         .then((response) => {
             console.log(response)
-            $location.path('/Profile');
+            $location.path('/Connection');
         }).catch((err) => console.error(err))
     }
+
+    this.test = undefined;
+    this.tmpFunction = () => {
+        console.log(this.test)
+    }
+
+    this.image = undefined;
+    this.handleFileSelect = (evt) => {
+        var files = evt.target.files; // FileList object
+        for (var i = 0, f; f = files[i]; i++) {
+          if (!f.type.match('image.*')) {
+            continue;
+          }
+          var reader = new FileReader();
+          reader.onload = ((theFile) => {
+            return (e) => {
+              var span = document.createElement('span');
+              console.log(e.target.result)
+              this.image = e.target.result;
+            };
+          })(f);
+          reader.readAsDataURL(f);
+        }
+      }
+      document.getElementById('files').addEventListener('change', this.handleFileSelect, false);
 });

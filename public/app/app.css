@@ -80,7 +80,7 @@ span{
   font-weight: 500;
   padding-top: -100px;
 }
-.box input[type = "text"],.box input[type = "password"]{
+.box input[type = "text"],.box input[type = "password"],.box input[type = "file"]{
   border:0;
   background: none;
   display: block;
@@ -94,7 +94,7 @@ span{
   border-radius: 24px;
   transition: 0.25s;
 }
-.box input[type = "text"]:focus,.box input[type = "password"]:focus{
+.box input[type = "text"]:focus,.box input[type = "password"]:focus,.box input[type = "file"]:focus{
   width: 280px;
   border-color: #33CCCC;
 }
