@@ -19,7 +19,6 @@ Connection.controller('ConnectionController', function ($location, $http) {
     this.username = undefined;
     this.password = undefined;
 
-
     //login:mdp Base64
     /**
      * @brief try to log a user 
