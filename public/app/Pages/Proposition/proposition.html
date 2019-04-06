@@ -59,7 +59,6 @@
         display: flex;
         margin-right: 10px;
     }
-
 </style>
 
 <div class="content">
@@ -67,7 +66,10 @@
         <div class="row">
             <h2 style="margin-left: 50px;">Proposals</h2>
         </div>
-            <div class="subDivDashboard" ng-repeat="object in $ctrl.dashboardObjects track by $index" ng-click="$ctrl.moveToDetails(object.type, object.id)">
+        <div class="row" style="margin-top: 10px;">
+
+            <div class="subDivDashboard" ng-repeat="object in $ctrl.all track by $index"
+                ng-click="$ctrl.moveToDetails(object.type, object.id)">
                 <div class="photoDashboard">
                     <img ng-src="{{object.photo}}" style="" alt="">
                 </div>
@@ -92,9 +94,11 @@
                     <br>
                     <div class="buttonsDashboar">
                         <div class="float-right" style="margin-right: 0px">
-                            <button class="btn btn-primary" ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
-                                    class="fa fa-thumbs-up"></span></button>
-                            <button class="btn btn-danger" ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
+                            <button class="btn btn-primary"
+                                ng-click="$ctrl.followClick(object); $event.stopPropagation();">
+                                <span class="fa fa-thumbs-up"></span></button>
+                            <button class="btn btn-danger"
+                                ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
                                     class="fa fa-thumbs-down"></span></button>
                         </div>
                     </div>
