@@ -28,7 +28,8 @@ Profile.config(['$routeProvider', function ($routeProvider) {
           photo: "../../img/devlogo.png",
           description: elem.description,
           type: 'friend',
-          id: elem.id
+          id: elem.id,
+          isLike: false,
         }
       })
       console.log(this.userConnected)
@@ -45,7 +46,8 @@ Profile.config(['$routeProvider', function ($routeProvider) {
             photo: "../../img/devlogo.png",
             description: elem.description,
             type: 'hobbie',
-            id: elem.id
+            id: elem.id,
+            isLike: false,
           }
         })
         this.all = this.all.concat(this.hobbiesConnected)
@@ -61,7 +63,8 @@ Profile.config(['$routeProvider', function ($routeProvider) {
               photo: "../../img/devlogo.png",
               description: elem.description,
               type: 'companie',
-              id: elem.id
+              id: elem.id,
+              isLike: false,
             }
           })
           this.all = this.all.concat(this.companiesConnected)
@@ -95,6 +98,7 @@ Profile.config(['$routeProvider', function ($routeProvider) {
       $http.post(route)
       .then((response) => response.data)
       .then((response) => {
+        obj.isLike = !obj.isLike
         console.log(response)
       }).catch(() => alert("ERROR REQUEST"))
     }
@@ -123,6 +127,7 @@ Profile.config(['$routeProvider', function ($routeProvider) {
       $http.delete(route)
       .then((response) => response.data)
       .then((response) => {
+        obj.isLike = !obj.isLike
         console.log(response)
       }).catch(() => alert("ERROR REQUEST"))
     }

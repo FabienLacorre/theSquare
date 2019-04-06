@@ -47,22 +47,27 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
           this.companies = responses[0];
           this.companies.forEach((elem) => {
             elem.photo = "../../img/test.jpg"
+            elem.isLike = true
           })
           this.hobbies = responses[1];
           this.hobbies.forEach((elem) => {
             elem.photo = "../../img/test.jpg"
+            elem.isLike = true
           })
           this.skills = responses[2];
           this.skills.forEach((elem) => {
             elem.photo = "../../img/test.jpg"
+            elem.isLike = true
           })
           this.friends = responses[3];
           this.friends.forEach((elem) => {
             elem.photo = "../../img/test.jpg"
+            elem.isLike = true
           })
           this.jobs = responses[4];
-          this.hobbies.forEach((elem) => {
+          this.jobs.forEach((elem) => {
             elem.photo = "../../img/test.jpg"
+            elem.isLike = true
           })
           if (!$scope.$$phase) {
             $scope.$apply();
@@ -101,6 +106,7 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
     .then((response) => response.data)
     .then((response) => {
       console.log(response)
+      obj.isLike = !obj.isLike
       $location.path('/Profile')
     }).catch(() => alert("ERROR REQUEST"))
     
@@ -116,6 +122,7 @@ Profile.controller('ProfileController', function ($location, $http, $scope) {
     .then((response) => response.data)
     .then((response) => {
       console.log(response)
+      obj.isLike = !obj.isLike
       $location.path('/Profile')
     }).catch(() => alert("ERROR REQUEST"))
     

@@ -177,11 +177,11 @@
                             <div class="info">
                                 <span>{{companie.name}}</span>
                                 <div class="float-right">
-                                    <button style="margin-bottom: 5px;" class="btn btn-primary"
+                                    <button ng-if="!companie.isLike" style="margin-bottom: 5px;" class="btn btn-primary"
                                         ng-click="$ctrl.followClick(companie, 'companies'); $event.stopPropagation();"> <span
                                             class="fa fa-thumbs-up"></span></button>
                                     <br>
-                                    <button class="btn btn-danger"
+                                    <button ng-if="companie.isLike" class="btn btn-danger"
                                         ng-click="$ctrl.unfollowClick(companie, 'companies'); ; $event.stopPropagation();"><span
                                             class="fa fa-thumbs-down"></span></button>
                                 </div>
@@ -204,11 +204,11 @@
                             <div class="info">
                                 <span>{{friend.firstname}} {{friend.lastname}}</span>
                                 <div class="float-right">
-                                    <button style="margin-bottom: 5px;" class="btn btn-primary"
+                                    <button ng-if="!friend.isLike" style="margin-bottom: 5px;" class="btn btn-primary"
                                         ng-click="$ctrl.followClick(friend, 'follow'); $event.stopPropagation();"> <span
                                             class="fa fa-thumbs-up"></span></button>
                                     <br>
-                                    <button class="btn btn-danger"
+                                    <button ng-if="friend.isLike" class="btn btn-danger"
                                         ng-click="$ctrl.unfollowClick(friend, 'follow'); $event.stopPropagation();"><span
                                             class="fa fa-thumbs-down"></span></button>
                                 </div>
@@ -235,11 +235,11 @@
                             <div class="info">
                                 <span>{{job.name}}</span>
                                 <div class="float-right">
-                                    <button style="margin-bottom: 5px;" class="btn btn-primary"
+                                    <button ng-if="!job.isLike" style="margin-bottom: 5px;" class="btn btn-primary"
                                         ng-click="$ctrl.followClick(job, 'jobs'); $event.stopPropagation();"> <span
                                             class="fa fa-thumbs-up"></span></button>
                                     <br>
-                                    <button class="btn btn-danger"
+                                    <button ng-if="job.isLike" class="btn btn-danger"
                                         ng-click="$ctrl.unfollowClick(job, 'jobs'); $event.stopPropagation();"><span
                                             class="fa fa-thumbs-down"></span></button>
                                 </div>
@@ -264,11 +264,11 @@
                             <div class="info">
                                 <span>{{hobbie.name}}</span>
                                 <div class="float-right">
-                                    <button style="margin-bottom: 5px;" class="btn btn-primary"
+                                    <button ng-if="!hobbie.isLike" style="margin-bottom: 5px;" class="btn btn-primary"
                                         ng-click="$ctrl.followClick(hobbie, 'hobbies'); $event.stopPropagation();"> <span
                                             class="fa fa-thumbs-up"></span></button>
                                     <br>
-                                    <button class="btn btn-danger"
+                                    <button ng-if="hobbie.isLike" class="btn btn-danger"
                                         ng-click="$ctrl.unfollowClick(hobbie, 'hobbies'); $event.stopPropagation();"><span
                                             class="fa fa-thumbs-down"></span></button>
                                 </div>
@@ -290,11 +290,11 @@
                             <div class="info">
                                 <span>{{skill.name}}</span>
                                 <div class="float-right">
-                                    <button style="margin-bottom: 5px;" class="btn btn-primary"
+                                    <button ng-if="!skill.isLike" style="margin-bottom: 5px;" class="btn btn-primary"
                                         ng-click="$ctrl.followClick(skill, 'skills'); $event.stopPropagation();"> <span
                                             class="fa fa-thumbs-up"></span></button>
                                     <br>
-                                    <button class="btn btn-danger"
+                                    <button ng-if="skill.isLike" class="btn btn-danger"
                                         ng-click="$ctrl.unfollowClick(skill, 'skills'); $event.stopPropagation();"><span
                                             class="fa fa-thumbs-down"></span></button>
                                 </div>
