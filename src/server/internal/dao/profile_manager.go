@@ -522,7 +522,7 @@ func (m *ProfileManager) GetPropositionsUsers(profileID int) ([]*Profile, error)
 	}
 	defer results.Close()
 
-	var profiles []*Profile
+	profiles := []*Profile{}
 	for row, _, err := results.NextNeo(); err != io.EOF; row, _, err = results.NextNeo() {
 		profiles = append(profiles, rowToProfile(row))
 	}
