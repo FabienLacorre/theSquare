@@ -167,7 +167,7 @@ func (m *ProfileManager) Create(p *Profile) error {
 				password: {password},
 				firstname: {fname},
 				lastname: {lname},
-				birthday: {birthday}
+				birthday: {birthday},
 				image: {image}
 			})
 		CREATE (ci)-[:Located]->(co)
