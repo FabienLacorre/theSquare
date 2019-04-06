@@ -10,5 +10,3 @@ navBar.controller('navBarController', function ($location, $http, $scope) {
         }).catch((err) => console.error(err))
     }
 });
-
-// neo4j-admin load --from=data/preset/2019-03-11.dump --force
