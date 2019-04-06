@@ -64,3 +64,23 @@ func (s *HobbyService) Search(rw http.ResponseWriter, req *http.Request) {
 	rw.Header().Set("Content-type", "application/json")
 	rw.Write(datas)
 }
+
+func (s *HobbyService) GetLikers(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	hobbyID, _ := strconv.ParseInt(vars["id"], 10, 64)
+
+	profiles, err := s.manager.GetLikers(hobbyID)
+	if err != nil {
+		internalServerError(rw, "cannot get likers", err)
+		return
+	}
+
+	data, err := json.Marshal(profiles)
+	if err != nil {
+		internalServerError(rw, "cannont marshal profile slice type", err)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	rw.Write(data)
+}

@@ -113,3 +113,31 @@ func (m *HobbyManager) Search(pattern string) (*SearchResponse, error) {
 
 	return response, nil
 }
+
+func (m *HobbyManager) GetLikers(hobbyID int64) ([]*Profile, error) {
+	conn, err := m.pool.OpenPool()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	r, err := conn.QueryNeo(`
+		MATCH (p:Profile)-[:Likes]->(h:Hobby) WHERE ID(h) = {hobbyID} WITH p
+		MATCH (e:Education)<-[:Studies]-(p)-[:Lives]->(ci:City)-[:Located]->(co:Country)
+		RETURN p, ci, co, e`,
+		map[string]interface{}{
+			"hobbyID": hobbyID,
+		})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot query: %v", err)
+	}
+	defer r.Close()
+
+	profiles := []*Profile{}
+	for data, _, err := r.NextNeo(); err != io.EOF; data, _, err = r.NextNeo() {
+		profiles = append(profiles, rowToProfile(data))
+	}
+
+	return profiles, nil
+}
