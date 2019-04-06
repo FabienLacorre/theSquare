@@ -221,6 +221,11 @@ func (m *ProfileManager) GetCompanies(profileID int) ([]*Company, error) {
 			companies[c.NodeIdentity].Siret = c.Properties["siret"].(string)
 			companies[c.NodeIdentity].Siren = c.Properties["siren"].(string)
 			companies[c.NodeIdentity].Description = c.Properties["description"].(string)
+			var b64Img string
+			if v, ok := c.Properties["image"]; ok {
+				b64Img = v.(string)
+			}
+			companies[c.NodeIdentity].Image = b64Img
 		}
 		companies[c.NodeIdentity].Domains = append(companies[c.NodeIdentity].Domains, d)
 	}
@@ -557,6 +562,11 @@ func (m *ProfileManager) GetPropositionsCompanies(profileID int) ([]*Company, er
 			companies[c.NodeIdentity].Siret = c.Properties["siret"].(string)
 			companies[c.NodeIdentity].Siren = c.Properties["siren"].(string)
 			companies[c.NodeIdentity].Description = c.Properties["description"].(string)
+			var b64Img string
+			if v, ok := c.Properties["image"]; ok {
+				b64Img = v.(string)
+			}
+			companies[c.NodeIdentity].Image = b64Img
 		}
 		companies[c.NodeIdentity].Domains = append(companies[c.NodeIdentity].Domains, d)
 	}
