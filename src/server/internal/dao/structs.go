@@ -15,6 +15,7 @@ type Company struct {
 	Siren       string   `json:"siren"`
 	Description string   `json:"description"`
 	Domains     []string `json:"domains"`
+	Image       string   `json:"image"`
 }
 
 type Job struct {
@@ -34,6 +35,7 @@ type Profile struct {
 	Country        string `json:"country"`
 	City           string `json:"city"`
 	EducationLevel int64  `json:"education"`
+	Image          string `json:"image"`
 }
 
 type Skill struct {

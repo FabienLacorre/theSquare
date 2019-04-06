@@ -48,6 +48,12 @@ func (m *CompanyManager) GetByID(id int64) (*Company, error) {
 			company.Siret = c.Properties["siret"].(string)
 			company.Siren = c.Properties["siren"].(string)
 			company.Description = c.Properties["description"].(string)
+
+			var b64Img string
+			if v, ok := c.Properties["image"]; ok {
+				b64Img = v.(string)
+			}
+			company.Image = b64Img
 		}
 
 		d, _ := data[1].(string)
@@ -92,6 +98,12 @@ func (m *CompanyManager) Search(pattern string) (*SearchResponse, error) {
 			companies[c.NodeIdentity].Siret = c.Properties["siret"].(string)
 			companies[c.NodeIdentity].Siren = c.Properties["siren"].(string)
 			companies[c.NodeIdentity].Description = c.Properties["description"].(string)
+
+			var b64Img string
+			if v, ok := c.Properties["image"]; ok {
+				b64Img = v.(string)
+			}
+			companies[c.NodeIdentity].Image = b64Img
 		}
 		companies[c.NodeIdentity].Domains = append(companies[c.NodeIdentity].Domains, d)
 	}
