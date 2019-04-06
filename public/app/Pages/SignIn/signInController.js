@@ -52,6 +52,7 @@ SignIn.controller('SignInController', function ($location, $http) {
             country: this.newUser.country,
             city: this.newUser.city,
             image: this.image,
+            education: this.newUser.educationLevel,
         }).then(response => response.data)
         .then((response) => {
             console.log(response)
