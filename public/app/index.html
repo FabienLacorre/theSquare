@@ -15,6 +15,7 @@
   <!-- <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/normalize.css"> -->
   <!-- <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/main.css"> -->
   <link rel="stylesheet" href="app.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"></script>
   <!-- <script src="lib/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script> -->
 </head>
 
@@ -24,30 +25,35 @@
     Your browser does not support the video tag. I suggest you upgrade your
     browser.
   </video>
-  <nav id="test" class="navbar navbar-expand-lg navbar-dark" style="background-color: #0C1721">
-    <a class="navbar-brand" href="#!/Dashboard">The square</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="#!/Dashboard">Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#!/Profile">Your profile</a>
-        </li>
-        <!-- <li class="nav-item">
-          <a class="nav-link" href="#!/Configuration">Configuration</a>
-        </li> -->
-        <li class="nav-item">
-          <a class="nav-link" href="#!/">Log out</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
+  <div ng-controller="navBarController">
+    <nav id="test" class="navbar navbar-expand-lg navbar-dark" style="background-color: #0C1721">
+      <a class="navbar-brand" href="#!/Dashboard">The square</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+  
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#!/Dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#!/Profile">Your profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#!/Proposition">Proposals</a>
+          </li>
+          <!-- <li class="nav-item">
+            <a class="nav-link" href="#!/Configuration">Configuration</a>
+          </li> -->
+          <li class="nav-item">
+            <a class="nav-link" ng-click="logout()">Log out</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
   <!-- <img src="./img/city.jpg" style=""> -->
 
   <div ng-view></div>
@@ -66,6 +72,10 @@
   <script src="Pages/SignIn/signInController.js"></script>
   <script src="Pages/Details/detailsController.js"></script>
   <script src="Pages/Profile/profileController.js"></script>
+  <script src="Pages/Proposition/propositionController.js"></script>
+
+  <script src="Pages/navBar/navBarController.js"></script>
+
   <script src="core/version/version.js"></script>
   <script src="core/version/version-directive.js"></script>
   <script src="core/version/interpolate-filter.js"></script>
@@ -76,7 +86,7 @@
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Didact+Gothic" rel="stylesheet">
 
-  <!-- <script src="/node_modules/angular-ui-router/release/angular-ui-router.min.js"></script> -->
+  <script src="/node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/1.0.22/angular-ui-router.js"></script>
 
 

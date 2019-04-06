@@ -12,11 +12,15 @@ services:
       - 7474:7474
       - 7687:7687
     restart: on-failure
+    volumes:
+      - ./data:/data
 
   server:
     build:
-      context: src/server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: src/server/Dockerfile
+    ports:
+      - 8080:8080
     depends_on: 
       - 'neo4j'
     environment:

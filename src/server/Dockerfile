@@ -2,9 +2,9 @@
 # File Created: 06 Mar 2019 11:31
 # By Maxence Moutoussamy <maxence.moutoussamy1@gmail.com>
 
-FROM golang:onbuild
-ADD . /go/src/server
+FROM golang:1.8
+ADD ./src/server /go/src/server
+ADD ./public public
 WORKDIR /go/src/server
-RUN go get server
-RUN go install
-ENTRYPOINT ["/go/bin/server"]
+RUN go build
+ENTRYPOINT ["./server"]

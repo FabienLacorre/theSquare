@@ -2,3 +2,6 @@
 pkg/
 .env
 public/node_modules
+src/server/server
+data/databases
+data/dbms

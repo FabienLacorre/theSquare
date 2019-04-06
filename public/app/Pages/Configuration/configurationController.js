@@ -14,6 +14,5 @@ Configuration.config(['$routeProvider', function ($routeProvider) {
  * @brief Configuration controller
  */
 Configuration.controller('ConfigurationController', function () {
-  console.log("hello dashboar controller")
   document.getElementById('test').style.display = "";
 });

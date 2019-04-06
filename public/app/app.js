@@ -4,12 +4,14 @@
 angular.module('myApp', [
   'ngRoute',
   'ui.router',
+  'navBar',
   'Dashboard',
   'Connection',
   'Configuration',
   'SignIn',
   'Profile',
   'Details',
+  'Proposition',
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/'});

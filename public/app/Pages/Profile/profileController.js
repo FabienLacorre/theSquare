@@ -13,9 +13,67 @@ Profile.config(['$routeProvider', function ($routeProvider) {
 /**
  * @brief Profile controller
  */
-Profile.controller('ProfileController', function ($location) {
-  console.log("hello dashboar controller")
+Profile.controller('ProfileController', function ($location, $http, $scope) {
+  this.userId = localStorage.getItem("id");
   document.getElementById('test').style.display = "";
+  this.hobbies = [];
+  this.companies = [];
+  this.skills = [];
+  this.friends = [];
+  this.jobs = [];
+
+
+  this.me = undefined;
+
+  $http.get('/api/profile/' + this.userId)
+    .then((response) => response.data)
+    .then((response) => {
+      this.me = response
+      if (this.me.image == null || this.me.image == ""){
+        this.me.image = "../../img/test.jpg"
+      }
+
+      const promises = []
+
+      promises.push($http.get('/api/profile/' + this.userId + "/companies"))
+      promises.push($http.get('/api/profile/' + this.userId + "/hobbies"))
+      promises.push($http.get('/api/profile/' + this.userId + "/skills"))
+      promises.push($http.get('/api/profile/' + this.userId + "/followed"))
+      promises.push($http.get('/api/profile/' + this.userId + "/jobs"))
+
+      Promise.all(promises)
+        .then((responses) => {
+          responses = responses.map(elem => elem.data)
+          this.companies = responses[0];
+          this.companies.forEach((elem) => {
+            elem.photo = elem.image != null && elem.image !== "" ? elem.image : "../../img/test.jpg"
+            elem.isLike = true
+          })
+          this.hobbies = responses[1];
+          this.hobbies.forEach((elem) => {
+            elem.photo = "../../img/test.jpg"
+            elem.isLike = true
+          })
+          this.skills = responses[2];
+          this.skills.forEach((elem) => {
+            elem.photo = "../../img/test.jpg"
+            elem.isLike = true
+          })
+          this.friends = responses[3];
+          this.friends.forEach((elem) => {
+            elem.photo = elem.image != null && elem.image !== "" ? elem.image : "../../img/test.jpg"
+            elem.isLike = true
+          })
+          this.jobs = responses[4];
+          this.jobs.forEach((elem) => {
+            elem.photo = "../../img/test.jpg"
+            elem.isLike = true
+          })
+          if (!$scope.$$phase) {
+            $scope.$apply();
+          }
+        }).catch((err) => alert("ERROR" + err))
+    })
 
   this.changePasswordBool = false;
 
@@ -27,64 +85,39 @@ Profile.controller('ProfileController', function ($location) {
    * @brief validation changement mot de passe handler button
    */
   this.validateChangePassword = () => {
-    console.log("MODIFICATION PASSWORD CLICK")
     this.changePasswordBool = false;
-  }
-
-  this.me = {
-    name: "LACORRE",
-    surname: "Fabien",
-    age: 25,
-    city: "Rennes",
-    friends: [],
-  }
-
-  this.friends = []
-  for (let i = 0; i < 10; i++) {
-    this.friends.push({
-      name: "toto",
-      surname: "titi " + i,
-      age: "100",
-      city: "Paris",
-      photo: "../../img/test.jpg"
-    })
-  }
-
-  this.hobbies = []
-  for (let i = 0; i < 10; i++) {
-    this.hobbies.push({
-      name: "hobbies test " + i,
-      photo: "../../img/test.jpg"
-    })
-  }
-
-  this.companies = []
-  for (let i = 0; i < 10; i++) {
-    this.companies.push({
-      name: "Apple",
-      photo: "../../img/test.jpg",
-    })
   }
 
   /**
    * @brief change location page for detail page
    */
-  this.moveToDetails = (type) => {
-    console.log("move to details")
-    $location.path('/Details/' + type)
+  this.moveToDetails = (type, id) => {
+    $location.path('/Details/' + type + "/" + id)
   }
 
   /**
   * @brief follow handler button
   */
-  this.followClick = (obj) => {
-    console.log("follow", obj)
+  this.followClick = (obj, type) => {
+    $http.post('/api/profile/' + this.userId + "/" + type + "/" + obj.id)
+    .then((response) => response.data)
+    .then((response) => {
+      obj.isLike = !obj.isLike
+      $location.path('/Profile')
+    }).catch(() => alert("ERROR REQUEST"))
+    
   }
 
   /**
    * @brief unfollow handler button
    */
-  this.unfollowClick = (obj) => {
-    console.log("unfollow", obj)
+  this.unfollowClick = (obj, type) => {
+    $http.delete('/api/profile/' + this.userId + "/" + type + "/" + obj.id)
+    .then((response) => response.data)
+    .then((response) => {
+      obj.isLike = !obj.isLike
+      $location.path('/Profile')
+    }).catch(() => alert("ERROR REQUEST"))
+    
   }
 });
