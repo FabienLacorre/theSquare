@@ -1,0 +1,105 @@
+<style>
+    .mainDivDashboard {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 70%;
+        background: rgba(0, 0, 10, 0.6);
+        padding-top: 20px;
+    }
+
+    .subDivDashboard {
+        margin: 0 auto;
+        width: 65%;
+        padding: 20px;
+        margin-bottom: 10px;
+        display: flex;
+        border: 1px solid #33CCCC;
+        border-top-left-radius: 15px;
+        background-color: rgba(0, 0, 0, 0.5);
+        transition: 0.25s;
+    }
+
+    .subDivDashboard:hover {
+        width: 80%;
+        border-color: white;
+    }
+
+    .photoDashboard {
+        width: 160px;
+        height: 130px;
+        border-top-left-radius: 10px;
+    }
+
+    .informationDashboard {
+        margin-left: 20px;
+        width: 100%;
+        height: 100%;
+    }
+
+    .descriptionDashboard {
+        font-size: 12px;
+    }
+
+    img {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        width: auto;
+        height: 100%;
+    }
+
+    .SeachDivDashboard {
+        margin: 0 auto;
+        margin-bottom: 10px;
+        width: 65%;
+    }
+
+    .SeachDivDashboard input {
+        display: flex;
+        margin-right: 10px;
+    }
+
+</style>
+
+<div class="content">
+    <div class="mainDivDashboard row">
+        <div class="row">
+            <h2 style="margin-left: 50px;">Proposals</h2>
+        </div>
+            <div class="subDivDashboard" ng-repeat="object in $ctrl.dashboardObjects track by $index" ng-click="$ctrl.moveToDetails(object.type, object.id)">
+                <div class="photoDashboard">
+                    <img ng-src="{{object.photo}}" style="" alt="">
+                </div>
+                <div class="informationDashboard">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <span style="color: #33CCCC">{{object.nom}}</span>
+                        </div>
+                        <div class="col-md-4">
+                            <span>{{object.type | uppercase}}</span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="float-right">{{object.date | date : 'dd/MM/yyyy'}}</span>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row descriptionDashboard">
+                        <div class="col-md-12">
+                            <span>{{object.description}}</span>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="buttonsDashboar">
+                        <div class="float-right" style="margin-right: 0px">
+                            <button class="btn btn-primary" ng-click="$ctrl.followClick(object); $event.stopPropagation();"> <span
+                                    class="fa fa-thumbs-up"></span></button>
+                            <button class="btn btn-danger" ng-click="$ctrl.unfollowClick(object); $event.stopPropagation();"><span
+                                    class="fa fa-thumbs-down"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

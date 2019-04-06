@@ -11,6 +11,7 @@ angular.module('myApp', [
   'SignIn',
   'Profile',
   'Details',
+  'Proposition',
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/'});
