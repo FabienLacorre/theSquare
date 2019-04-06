@@ -170,8 +170,9 @@ func (m *ProfileManager) Create(p *Profile) error {
 				birthday: {birthday},
 				image: "`+p.Image+`"
 			})
-		CREATE (ci)-[:Located]->(co)
-		CREATE (p)-[:Lives]->(ci)`,
+		MERGE (ci)-[:Located]->(co)
+		MERGE (p)-[:Lives]->(ci)
+		MERGE (p)-[:Studies]->(e)`,
 		map[string]interface{}{
 			"country_name":    strings.Title(p.Country),
 			"city_name":       strings.Title(p.City),

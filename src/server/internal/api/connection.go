@@ -31,6 +31,7 @@ type signInForm struct {
 	Country   string `json:"country"`
 	City      string `json:"city"`
 	Image     string `json:"image"`
+	Education int64  `json:"education"`
 }
 
 func NewConnectionService(profileManager *dao.ProfileManager) *ConnectionService {
@@ -102,14 +103,15 @@ func (s *ConnectionService) SignIn(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	p := &dao.Profile{
-		Login:     form.Login,
-		Password:  form.Password,
-		Firstname: form.Name,
-		Lastname:  form.Surname,
-		Birthday:  form.BirthDate,
-		Country:   form.Country,
-		City:      form.City,
-		Image:     form.Image,
+		Login:          form.Login,
+		Password:       form.Password,
+		Firstname:      form.Name,
+		Lastname:       form.Surname,
+		Birthday:       form.BirthDate,
+		Country:        form.Country,
+		City:           form.City,
+		Image:          form.Image,
+		EducationLevel: form.Education,
 	}
 
 	if err := s.profileManager.Create(p); err != nil {
