@@ -34,6 +34,7 @@ type Profile struct {
 	Country        string `json:"country"`
 	City           string `json:"city"`
 	EducationLevel int64  `json:"education"`
+	Image          string `json:"image"`
 }
 
 type Skill struct {

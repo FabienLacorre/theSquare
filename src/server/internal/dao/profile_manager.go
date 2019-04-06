@@ -606,6 +606,11 @@ func rowToProfile(row []interface{}) *Profile {
 	co, _ := row[2].(graph.Node)
 	e, _ := row[3].(graph.Node)
 
+	var b64Img string
+	if _, ok := p.Properties["image"]; ok {
+		b64Img = p.Properties["image"].(string)
+	}
+
 	return &Profile{
 		Entity: Entity{
 			ID: p.NodeIdentity,
@@ -618,6 +623,7 @@ func rowToProfile(row []interface{}) *Profile {
 		Country:        co.Properties["name"].(string),
 		City:           ci.Properties["name"].(string),
 		EducationLevel: e.Properties["level"].(int64),
+		Image:          b64Img,
 	}
 }
 
